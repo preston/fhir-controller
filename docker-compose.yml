@@ -1,13 +1,70 @@
 version: '3'
 
 services:
+
+  patient:
+    image: asushares/patient:latest
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          memory: 16M
+        limits:
+          memory: 64M
+    restart: unless-stopped
+    ports:
+      - 4200:80
+    depends_on:
+      - hapi
+    environment:
+      - PATIENT_PORTAL_DEFAULT_FHIR_URL=http://localhost:8080/fhir
+      - PATIENT_PORTAL_CONSENT_CDS_ROOT_URL=http://localhost:3000
+
+
+  consent-manager:
+    image: asushares/consent-manager:latest
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          memory: 16M
+        limits:
+          memory: 64M
+    restart: unless-stopped
+    ports:
+      - 4201:80
+    depends_on:
+      - hapi
+    environment:
+      - CONSENT_BUILDER_DEFAULT_FHIR_URL=http://localhost:8080/fhir
+
+  rules:
+    image: asushares/rules:latest
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          memory: 16M
+        limits:
+          memory: 64M
+    restart: unless-stopped
+    ports:
+      - 4202:80
+    depends_on:
+      - consent-manager
+      - hapi
+    environment:
+      - DEFAULT_RULES_FILE_URL=http://localhost:3000/data/sensitivity-rules.json
+
   cds:
     image: asushares/cds:latest
     deploy:
       replicas: 1
       resources:
         reservations:
-          memory: 64M
+          memory: 32M
+        limits:
+          memory: 256M
       # restart_policy: unless-stopped
     restart: unless-stopped
     ports:
@@ -18,25 +75,10 @@ services:
       - FHIR_BASE_URL=http://hapi:8080/fhir
       - ORG_NAME=My CDS Consent Sandbox
       - ORG_URL=https://www.example.com
-
-
-  consent-manager:
-    image: asushares/consent-manager:latest
-    deploy:
-      replicas: 1
-      resources:
-        reservations:
-          memory: 64M
-    restart: unless-stopped
-    ports:
-      - 4200:80
-    depends_on:
-      - hapi
-    environment:
-      - CONSENT_BUILDER_DEFAULT_FHIR_URL=http://localhost:8080/fhir
+      - ADMINISTRATOR_PASSWORD=admin
 
   hapi:
-    image: hapiproject/hapi:v6.8.3
+    image: hapiproject/hapi:v6.10.1
     deploy:
       resources:
         reservations:
@@ -59,6 +101,7 @@ services:
       - spring.jpa.properties.hibernate.search.enabled=false
     volumes:
       - postgresql-data:/var/lib/postgresql/data:rw
+
   postgresql:
     image: postgres:16-alpine
     deploy:
