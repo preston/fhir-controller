@@ -22,7 +22,7 @@ services:
 
 
   consent-manager:
-    image: asushares/consent-manager:latest
+    image: asushares/provider:latest
     deploy:
       replicas: 1
       resources:
@@ -36,7 +36,7 @@ services:
     depends_on:
       - hapi
     environment:
-      - CONSENT_BUILDER_DEFAULT_FHIR_URL=http://localhost:8080/fhir
+      - PROVIDER_DEFAULT_FHIR_URL=http://localhost:8080/fhir
 
   rules:
     image: asushares/rules:latest
