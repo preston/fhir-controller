@@ -11,7 +11,7 @@
                 <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
                 <input type="text" class="form-control" [(ngModel)]="fhir_base_url" />
             </div>
-            <div class="btn-group mt-3">
+            <div class="btn-group mt-3 me-2">
                 <button class="btn btn-lg btn-primary" role="button" (click)="load()"
                     [disabled]="state == 'loading'"><span class="bi bi-save"> Load
                         Selected Files</span></button>
@@ -21,6 +21,12 @@
                 <button *ngIf="development" class="btn btn-lg btn-secondary" role="button" (click)="test()"><span
                         class="bi bi-chat"></span>
                     Test</button>
+            </div>
+            <div class="btn-group mt-3">
+                <button class="btn btn-lg btn-danger" role="button" (click)="expunge()"
+                    [disabled]="state == 'loading'"><span class="bi bi-save"> Expunge All FHIR Server
+                        Data</span></button>
+
             </div>
         </div>
         <div class="col-sm-4">
@@ -42,7 +48,8 @@
         <div class="col-sm-8">
             <h4>Files
 
-                <a role="button" class="btn btn-sm btn-primary" (click)="toggleSelected()"> <span class="bi bi-check-square"></span> Toggle Selected</a>
+                <a role="button" class="btn btn-sm btn-primary" (click)="toggleSelected()"> <span
+                        class="bi bi-check-square"></span> Toggle Selected</a>
             </h4>
             <span class="fw-lighter">The following data files will be loading in the following sequence.
             </span>

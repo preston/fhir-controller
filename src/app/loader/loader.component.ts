@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import {MomentModule} from 'ngx-moment';
+import { MomentModule } from 'ngx-moment';
 
 import { DataFile } from './data_file';
 import { LoaderMessage } from './loader_message';
@@ -118,7 +118,32 @@ export class LoaderComponent {
     this.files_to_load.forEach(f => {
       f.load = !f.load;
     });
-  
+
+  }
+
+  expunge() {
+    let data = {
+      "resourceType": "Parameters",
+      "parameter": [
+        {
+          "name": "expungeEverything",
+          "valueBoolean": true
+        }
+      ]
+    }
+    this.http.post(this.fhir_base_url + '/$expunge', data).subscribe({
+      next: data => {
+        this.toastService.showSuccessToast('Expunge', 'Server reports that all data has been expunged!');
+        this.messages.unshift({ type: 'primary', body: 'Expunge successful', date: new Date() });
+        console.log('Expunge successful');
+        console.log(data);
+      }, error: error => {
+        this.toastService.showErrorToast('Error Expunging', 'The server return an error from the expunge operation');
+        this.messages.unshift({ type: 'danger', body: 'Error expunging', date: new Date() });
+        console.error('Error expunging');
+        console.error(error);
+      }
+    });
   }
   test() {
     this.toastService.showSuccessToast('Test Message', 'Yay.');
