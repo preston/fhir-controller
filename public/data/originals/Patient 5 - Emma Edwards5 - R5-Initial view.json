@@ -1,0 +1,1260 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Patient/cfsb1702009366422",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "cfsb1702009366422",
+        "gender": "female",
+        "birthDate": "1991-05-05",
+        "maritalStatus": {
+          "coding": [
+            {
+              "code": "U",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "display": "unmarried"
+            }
+          ]
+        },
+        "name": [
+          {
+            "given": [
+              "Emma"
+            ],
+            "family": "Edwards5"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702009854411",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702009854411",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "47505003",
+              "system": "http://snomed.info/sct",
+              "display": "Post-traumatic stress disorder"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702010092736",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702010092736",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "370143000",
+              "system": "http://snomed.info/sct",
+              "display": "Major depressive disorder"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702010335538",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702010335538",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "48694002",
+              "system": "http://snomed.info/sct",
+              "display": "Anxiety"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702010429509",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702010429509",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "37796009",
+              "system": "http://snomed.info/sct",
+              "display": "Migraine"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702010597578",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702010597578",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "238136002",
+              "system": "http://snomed.info/sct",
+              "display": "Morbid obesity"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702010727447",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702010727447",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "40930008",
+              "system": "http://snomed.info/sct",
+              "display": "Hypothyroidism"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702010829610",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702010829610",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "266435005",
+              "system": "http://snomed.info/sct",
+              "display": "Gastro-oesophageal reflux disease without oesophagitis"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702010935940",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702010935940",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "429040005",
+              "system": "http://snomed.info/sct",
+              "display": "Ulcer"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702011009482",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702011009482",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "10743008",
+              "system": "http://snomed.info/sct",
+              "display": "Irritable bowel syndrome"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702011075668",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702011075668",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "41321000119101",
+              "system": "http://snomed.info/sct",
+              "display": "Myofascial pain syndrome of thoracic spine"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702011460716",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702011460716",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "298382003",
+              "system": "http://snomed.info/sct",
+              "display": "Scoliosis deformity of spine"
+            }
+          ]
+        },
+        "severity": {
+          "coding": [
+            {
+              "code": "255604002",
+              "system": "http://snomed.info/sct",
+              "display": "Mild"
+            }
+          ]
+        },
+        "note": [
+          {
+            "text": "levoscoliosis"
+          }
+        ],
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702011969832",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702011969832",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "30473006",
+              "system": "http://snomed.info/sct",
+              "display": "Pelvic pain"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702012056859",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702012056859",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "314631008",
+              "system": "http://snomed.info/sct",
+              "display": "Menometrorrhagia"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702012145230",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702012145230",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "237333004",
+              "system": "http://snomed.info/sct",
+              "display": "Hymen tear"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702012337262",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702012337262",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "236886002",
+              "system": "http://snomed.info/sct",
+              "display": "Hysterectomy"
+            }
+          ]
+        },
+        "status": "completed"
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Condition/cfsb1702012523170",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "cfsb1702012523170",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "68566005",
+              "system": "http://snomed.info/sct",
+              "display": "Urinary tract infection"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "display": "Active"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/AllergyIntolerance/cfsb1702081457522",
+      "resource": {
+        "resourceType": "AllergyIntolerance",
+        "id": "cfsb1702081457522",
+        "patient": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "reaction": [
+          {
+            "manifestation": [
+              {
+                "concept": {
+                  "coding": [
+                    {
+                      "code": "735173007",
+                      "system": "http://snomed.info/sct",
+                      "display": "Anaphylactic shock"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "code": "317117001",
+              "system": "http://snomed.info/sct",
+              "display": "Scopolamine butylbromide 10 mg oral tablet"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/AllergyIntolerance/cfsb1702081943188",
+      "resource": {
+        "resourceType": "AllergyIntolerance",
+        "id": "cfsb1702081943188",
+        "patient": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "330229006",
+              "system": "http://snomed.info/sct",
+              "display": "Felbinac 30 mg/g transdermal gel"
+            }
+          ]
+        },
+        "reaction": [
+          {
+            "manifestation": [
+              {
+                "concept": {
+                  "coding": [
+                    {
+                      "code": "65124004",
+                      "system": "http://snomed.info/sct",
+                      "display": "Swelling"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/AllergyIntolerance/cfsb1702082597491",
+      "resource": {
+        "resourceType": "AllergyIntolerance",
+        "id": "cfsb1702082597491",
+        "patient": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "763875007",
+              "system": "http://snomed.info/sct",
+              "display": "Sulfonamide-containing product"
+            }
+          ]
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active",
+              "system": "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
+              "display": "Active"
+            }
+          ]
+        },
+        "reaction": [
+          {
+            "manifestation": [
+              {
+                "concept": {
+                  "coding": [
+                    {
+                      "code": "422587007",
+                      "system": "http://snomed.info/sct",
+                      "display": "Nausea"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Observation/cfsb1702094098222",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "cfsb1702094098222",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "code": "99222-2",
+              "system": "http://loinc.org",
+              "display": "Employed"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Observation/cfsb1702094184288",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "cfsb1702094184288",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "code": "LA6189-0",
+              "system": "http://loinc.org",
+              "display": "Drug dependency"
+            }
+          ]
+        },
+        "valueBoolean": true,
+        "valueString": "Cannabis"
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Observation/cfsb1702094561788",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "cfsb1702094561788",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "code": {
+          "coding": [
+            {
+              "code": "LA10119-8",
+              "system": "http://loinc.org",
+              "display": "Wheelchair/scooter full time"
+            }
+          ]
+        },
+        "status": "final"
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Observation/cfsb1702094668883",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "cfsb1702094668883",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "code": "LA24145-7",
+              "system": "http://loinc.org",
+              "display": "General-Neglect or Abuse Suspected"
+            }
+          ]
+        },
+        "valueBoolean": false
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Observation/cfsb1702094786503",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "cfsb1702094786503",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "code": "LA30307-5",
+              "system": "http://loinc.org",
+              "display": "Single family house"
+            }
+          ]
+        },
+        "valueString": "shared bathroom"
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Observation/cfsb1702094953405",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "cfsb1702094953405",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "code": "LP32744-2",
+              "system": "http://loinc.org",
+              "display": "Urinalysis"
+            }
+          ]
+        },
+        "interpretation": [
+          {
+            "coding": [
+              {
+                "code": "N",
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                "display": "Normal"
+              }
+            ]
+          }
+        ],
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "laboratory",
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "display": "Laboratory"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Observation/cfsb1702095235167",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "cfsb1702095235167",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "code": "LP31696-5",
+              "system": "http://loinc.org",
+              "display": "Vitamin D"
+            }
+          ]
+        },
+        "interpretation": [
+          {
+            "coding": [
+              {
+                "code": "L",
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                "display": "Low"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702095340657",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702095340657",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "608890000",
+              "system": "http://snomed.info/sct",
+              "display": "Laparoscopic excision of bilateral ovarian cysts"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702095439058",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702095439058",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "720171000168107",
+              "system": "http://snomed.info/sct",
+              "display": "Laparoscopic cholecystectomy with conversion to open cholecystectomy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702095736483",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702095736483",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "112916000",
+              "system": "http://snomed.info/sct",
+              "display": "Operation on cervix"
+            }
+          ]
+        },
+        "note": [
+          {
+            "text": "open approach"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702096032290",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702096032290",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "79876008",
+              "system": "http://snomed.info/sct",
+              "display": "Operation on uterus"
+            }
+          ]
+        },
+        "note": [
+          {
+            "text": "open approach"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702096326725",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702096326725",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "73761001",
+              "system": "http://snomed.info/sct",
+              "display": "Colonoscopy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702096369340",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702096369340",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "74946000",
+              "system": "http://snomed.info/sct",
+              "display": "Operation on eustachian tube"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/Procedure/cfsb1702096477003",
+      "resource": {
+        "resourceType": "Procedure",
+        "id": "cfsb1702096477003",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "65200003",
+              "system": "http://snomed.info/sct",
+              "display": "Insertion of intrauterine contraceptive device"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702857927620",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702857927620",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "322809004",
+                "system": "http://snomed.info/sct",
+                "display": "Sumatriptan (as sumatriptan succinate) 100 mg oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858086731",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858086731",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "783387002",
+                "system": "http://snomed.info/sct",
+                "display": "Venlafaxine (as venlafaxine hydrochloride) 75 mg oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858146446",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858146446",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "321987003",
+                "system": "http://snomed.info/sct",
+                "display": "Citalopram (as citalopram hydrobromide) 20 mg oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858213581",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858213581",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "321949006",
+                "system": "http://snomed.info/sct",
+                "display": "Fluoxetine (as fluoxetine hydrochloride) 20 mg oral capsule"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858285629",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858285629",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "322982006",
+                "system": "http://snomed.info/sct",
+                "display": "Lamotrigine 100 mg oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858381251",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858381251",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "134538003",
+                "system": "http://snomed.info/sct",
+                "display": "Valproic acid (as valproate semisodium) 250 mg gastro-resistant oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858692404",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858692404",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "321286001",
+                "system": "http://snomed.info/sct",
+                "display": "Hydroxyzine hydrochloride 25 mg oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858785696",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858785696",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "321881001",
+                "system": "http://snomed.info/sct",
+                "display": "Trazodone hydrochloride 50 mg oral capsule"
+              }
+            ]
+          }
+        },
+        "status": "recorded"
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702858951347",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702858951347",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "387597003",
+                "system": "http://snomed.info/sct",
+                "display": "Dicycloverine hydrochloride 20 mg oral capsule"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702859016482",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702859016482",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "321242006",
+                "system": "http://snomed.info/sct",
+                "display": "Alprazolam 500 microgram oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702859086364",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702859086364",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "322691007",
+                "system": "http://snomed.info/sct",
+                "display": "Oxycodone hydrochloride 5 mg oral capsule"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702859165315",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702859165315",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "387162007",
+                "system": "http://snomed.info/sct",
+                "display": "Senna"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702859241456",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702859241456",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "346815008",
+                "system": "http://snomed.info/sct",
+                "display": "Simeticone 100 mg oral capsule"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702859569096",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702859569096",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "783081009",
+                "system": "http://snomed.info/sct",
+                "display": "Dexamfetamine sulfate 5 mg oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "http://clinfhir.com/fhir/MedicationStatement/cfsb1702859886211",
+      "resource": {
+        "resourceType": "MedicationStatement",
+        "id": "cfsb1702859886211",
+        "subject": {
+          "reference": "Patient/cfsb1702009366422"
+        },
+        "status": "recorded",
+        "medication": {
+          "concept": {
+            "coding": [
+              {
+                "code": "318769000",
+                "system": "http://snomed.info/sct",
+                "display": "Prazosin (as prazosin hydrochloride) 2 mg oral tablet"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

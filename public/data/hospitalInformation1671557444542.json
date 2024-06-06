@@ -1,6 +1,6 @@
 {
   "resourceType": "Bundle",
-  "type": "batch",
+  "type": "transaction",
   "entry": [ {
     "fullUrl": "urn:uuid:b6276b36-0b62-303e-b7e3-9d2517580e0b",
     "resource": {

@@ -1,0 +1,16 @@
+<div class="container m-4">
+    <h1>SHARES Stack Controller</h1>
+    <button class="btn btn-lg btn-primary" role="button" (click)="load()"><span class="bi bi-save"></span> Load Seed
+        Data</button>
+    <ul *ngIf="loading.length > 0" class="list-unstyled" >
+        <li *ngFor="let f of loading">{{f}}</li>
+    </ul>
+    <h4>Stack Links</h4>
+    <ul class="list-group">
+        <li class="list-group-item"><a [href]="patient_portal_url" target="_blank">Patient Portal</a></li>
+        <li class="list-group-item"><a [href]="provider_portal_url" target="_blank">Provided Portal</a></li>
+        <li class="list-group-item"><a [href]="rules_url" target="_blank">Rules Manager</a></li>
+        <li class="list-group-item"><a [href]="cds_url" target="_blank">CDS Hooks Server</a></li>
+        <li class="list-group-item"><a [href]="fhir_base_url" target="_blank">FHIR Base URL</a></li>
+    </ul>
+</div>
