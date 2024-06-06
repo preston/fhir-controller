@@ -1,16 +1,89 @@
-<div class="container m-4">
-    <h1>SHARES Stack Controller</h1>
-    <button class="btn btn-lg btn-primary" role="button" (click)="load()"><span class="bi bi-save"></span> Load Seed
-        Data</button>
-    <ul *ngIf="loading.length > 0" class="list-unstyled" >
-        <li *ngFor="let f of loading">{{f}}</li>
-    </ul>
-    <h4>Stack Links</h4>
-    <ul class="list-group">
-        <li class="list-group-item"><a [href]="patient_portal_url" target="_blank">Patient Portal</a></li>
-        <li class="list-group-item"><a [href]="provider_portal_url" target="_blank">Provided Portal</a></li>
-        <li class="list-group-item"><a [href]="rules_url" target="_blank">Rules Manager</a></li>
-        <li class="list-group-item"><a [href]="cds_url" target="_blank">CDS Hooks Server</a></li>
-        <li class="list-group-item"><a [href]="fhir_base_url" target="_blank">FHIR Base URL</a></li>
-    </ul>
+<div id="loader" class="container my-4 p-4">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>{{name}}</h1>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-sm-8">
+            <h4>Data Controls</h4>
+            <div class="input-group">
+                <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
+                <input type="text" class="form-control" [(ngModel)]="fhir_base_url" />
+            </div>
+            <div class="btn-group mt-3">
+                <button class="btn btn-lg btn-primary" role="button" (click)="load()"
+                    [disabled]="state == 'loading'"><span class="bi bi-save"> Load
+                        Selected Files</span></button>
+                <button class="btn btn-lg btn-primary" role="button" (click)="reset()"
+                    [disabled]="state == 'loading'"><span class="bi bi-arrow-clockwise"></span>
+                    Reset Form</button>
+                <button *ngIf="development" class="btn btn-lg btn-secondary" role="button" (click)="test()"><span
+                        class="bi bi-chat"></span>
+                    Test</button>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <section>
+                <h4>Links</h4>
+                <ul class="list-group">
+                    <li class="list-group-item"><a [href]="patient_portal_url" target="_blank">Patient Portal</a>
+                    </li>
+                    <li class="list-group-item"><a [href]="provider_portal_url" target="_blank">Provided Portal</a>
+                    </li>
+                    <li class="list-group-item"><a [href]="rules_url" target="_blank">Rules Manager</a></li>
+                    <li class="list-group-item"><a [href]="cds_url" target="_blank">CDS Hooks Server</a></li>
+                    <li class="list-group-item"><a [href]="fhir_base_url" target="_blank">FHIR Base URL</a></li>
+                </ul>
+            </section>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col-sm-8">
+            <h4>Files
+
+                <a role="button" class="btn btn-sm btn-primary" (click)="toggleSelected()"> <span class="bi bi-check-square"></span> Toggle Selected</a>
+            </h4>
+            <span class="fw-lighter">The following data files will be loading in the following sequence.
+            </span>
+            <div *ngIf="files_to_load.length > 0" class="list-group">
+                <span *ngFor="let f of files_to_load" class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            <input class="form-check-input me-1" role="button" [(ngModel)]="f.load" type="checkbox" />
+                            <a role="button" [href]="files_prefix + f.file" target="_blank">
+                                {{f.name}}
+                            </a>
+                        </h5>
+
+                        <small>{{f.type}}</small>
+                    </div>
+                    <p class="mb-1">{{f.description}}</p>
+                    <small>{{f.file}}</small>
+
+                    <!-- <span class="badge text-bg-primary rounded-pill">14</span> -->
+                </span>
+
+            </div>
+
+        </div>
+        <div class="col-sm-4">
+
+
+            <h4>Control Messages</h4>
+            <span class="fw-lighter">Your activity history.</span>
+            <ul class="list-group">
+                <li *ngFor="let m of messages" class="list-group-item" [class]="'list-group-item-' + m.type">
+                    <div class="d-flex w-100 justify-content-between">
+                        {{m.body}}
+                        <small> {{m.date | amTimeAgo}}</small>
+                    </div>
+
+
+
+                </li>
+            </ul>
+
+        </div>
+    </div>
 </div>
