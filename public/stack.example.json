@@ -1,0 +1,112 @@
+{
+    "$schema": "stack.schema.json",
+    "title": "SHARES Stack Controller",
+    "instructions": "Load all data files below to use SHARES' deidentified patient records and Synthea-generated Organization and Practitioner records.",
+    "fhir_base_url": "http://localhost:8080/fhir",
+    "links": [
+        {
+            "name": "FHIR Server",
+            "url": "http://localhost:8080"
+        }
+    ],
+    "data": [
+        {
+            "file": "hospitalInformation1671557337568.json",
+            "load": true,
+            "name": "Organization Bundle 1",
+            "description": "Synthea-generated Organization records",
+            "type": "Organization"
+        },
+        {
+            "file": "hospitalInformation1671557444542.json",
+            "load": true,
+            "name": "Organization Bundle 2",
+            "description": "Synthea-generated Organization records",
+            "type": "Organization"
+        },
+        {
+            "file": "practitionerInformation1671557337568.json",
+            "load": true,
+            "name": "Practioner Bundle 1",
+            "description": "Synthea-generated Practitioner records",
+            "type": "Practitioner"
+        },
+        {
+            "file": "practitionerInformation1671557444542.json",
+            "load": true,
+            "name": "Practioner Bundle2 ",
+            "description": "Synthea-generated Practitioner records",
+            "type": "Practitioner"
+        },
+        {
+            "file": "Patient 1 - Adrian Allen1 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 1 - Adrian Allen1",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 2 - Beth Brooks2 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 2 - Beth Brooks2",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 3 - Carmen Chavez - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 3 - Carmen Chavez",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 4 - Diana Dixon4 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 4 - Diana Dixon4",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 5 - Emma Edwards5 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 5 - Emma Edwards5",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 8 - Hannah Hall8 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 8 - Hannah Hall8",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 9 - Ian Ingram9 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 9 - Ian Ingram9",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 10 - Justin Jordan10 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 10 - Justin Jordan10",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 11 - Kobe King11 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 11 - Kobe King11",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        },
+        {
+            "file": "Patient 12 - Lisa Little12 - R5-Initial view.json",
+            "load": true,
+            "name": "Patient 12 - Lisa Little12",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient"
+        }
+    ]
+}

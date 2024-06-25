@@ -1,0 +1,89 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://schema.skycapp.com/stack.schema.json",
+    "title": "FHIR Stack Controller Configuration Schema.",
+    "description": "For configuration files used by FHIR stack controllers.",
+    "type": "object",
+    "required": [
+        "title",
+        "instructions",
+        "data",
+        "fhir_base_url",
+        "links"
+    ],
+    "properties": {
+        "title": {
+            "description": "Very short name for the controller instance.",
+            "type": "string"
+        },
+        "instructions": {
+            "description": "Human-readable user instructinos for how to use this controller, in markdown format.",
+            "type": "string"
+        },
+        "data": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/data_file"
+            }
+        },
+        "fhir_base_url": {
+            "description": "Base URL for the FHIR server to use.",
+            "type": "string"
+        },
+        "links": {
+            "description": "Ordered list of links to other resources.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "url"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Human-readable name for the link.",
+                        "type": "string"
+                    },
+                    "url": {
+                        "description": "URL for the link.",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "data_file": {
+            "type": "object",
+            "required": [
+                "file",
+                "load",
+                "name",
+                "description",
+                "type"
+            ],
+            "properties": {
+                "file": {
+                    "description": "Name of a JSON FHIR data bundle file. Must be valid",
+                    "type": "string"
+                },
+                "load": {
+                    "description": "Whether or not to load the file by default.",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Human-readable name for the file. May be the same as the file name.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "A description of the data contained in the file.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "A brief text label used for UI purposes only. Does not affect data loading or processing.",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

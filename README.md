@@ -1,16 +1,12 @@
-# ASU SHARES CDS Consent Sandbox
+# FHIR Stack Controller
 
-This project provides a turnkey CDS sandbox for locally running the [ASU SHARES](https://www.asushares.com) software stack, as well as seed data for building your own custom use cases.
+This base image project provides a simply web UI for bootstrapping a freshly booted FHIR server by:
 
-```sh
-docker compose -f docker-compose.yml up
-```
+1. Loading a preset sequence of FHIR bundles to a given FHIR server in sequence.
+1. Expunging all records on that FHIR servers, effectively "resetting" the FHIR server to a default state. (Requires the FHIR server to support the $expunge operation.
 
+It must be provided a configuration file containing:
 
-| URL                   | Service           | Purpose       | Source Code   |
-|----                   |----               |----           |----           |
-| http://localhost:4200 | Patient Portal    | Patient-facing simple consent editor | https://github.com/asushares/patient
-| http://localhost:4201 | Consent Manager   | Provider-facing complex consent editor  | https://github.com/asushares/consent-manager
-| http://localhost:4202 | Rules Editor      | Patient-facing consent editor | https://github.com/asushares/rules
-| http://localhost:3000 | CDS Engine        | SHARES CDS Hooks service | https://github.com/asushares/cds
-| http://localhost:8080 | FHIR Server       | Underlying FHIR data repository | https://github.com/hapifhir/hapi-fhir
+* Application title and instructive text.
+* References to each data file in sequence.
+* Links for 

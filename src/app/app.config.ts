@@ -9,11 +9,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
 import { ToastService } from './toast/toast.service';
 import { MomentModule } from 'ngx-moment';
+import { MarkdownModule } from 'ngx-markdown';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     ToastService,
-    importProvidersFrom(BrowserModule, FormsModule, MomentModule),
+    importProvidersFrom(BrowserModule, FormsModule, MomentModule, MarkdownModule.forRoot()),
     provideHttpClient(withInterceptorsFromDi()),
     provideZoneChangeDetection({ eventCoalescing: true }),
      provideRouter(routes)]

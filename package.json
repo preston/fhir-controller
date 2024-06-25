@@ -1,6 +1,7 @@
 {
   "name": "stack",
-  "version": "0.0.0",
+  "description": "Skycapp default FHIR stack controller.",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "envsubst < public/configuration.template.js > public/configuration.js && ng serve",
@@ -10,27 +11,28 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^18.0.2",
-    "@angular/common": "^18.0.2",
-    "@angular/compiler": "^18.0.2",
-    "@angular/core": "^18.0.2",
-    "@angular/forms": "^18.0.2",
-    "@angular/platform-browser": "^18.0.2",
-    "@angular/platform-browser-dynamic": "^18.0.2",
-    "@angular/router": "^18.0.2",
+    "@angular/animations": "^18.0.4",
+    "@angular/common": "^18.0.4",
+    "@angular/compiler": "^18.0.4",
+    "@angular/core": "^18.0.4",
+    "@angular/forms": "^18.0.4",
+    "@angular/platform-browser": "^18.0.4",
+    "@angular/platform-browser-dynamic": "^18.0.4",
+    "@angular/router": "^18.0.4",
     "@asushares/core": "^2.2.7",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "jquery": "^3.7.1",
+    "ngx-markdown": "^18.0.0",
+    "ngx-moment": "^6.0.2",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.3",
-    "zone.js": "~0.14.6",
-    "ngx-moment": "^6.0.2"
+    "zone.js": "~0.14.7"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^18.0.3",
-    "@angular/cli": "^18.0.3",
-    "@angular/compiler-cli": "^18.0.2",
+    "@angular-devkit/build-angular": "^18.0.5",
+    "@angular/cli": "^18.0.5",
+    "@angular/compiler-cli": "^18.0.4",
     "@types/bootstrap": "^5.2.10",
     "@types/jasmine": "~5.1.4",
     "jasmine-core": "~5.1.2",
@@ -39,6 +41,6 @@
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.4.5"
+    "typescript": "< 5.5"
   }
 }

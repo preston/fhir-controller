@@ -2,7 +2,7 @@
 
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MomentModule } from 'ngx-moment';
@@ -10,44 +10,37 @@ import { MomentModule } from 'ngx-moment';
 import { DataFile } from './data_file';
 import { LoaderMessage } from './loader_message';
 import { ToastService } from '../toast/toast.service';
+import { StackConfiguration } from './stack_configuration';
+import { MarkdownComponent } from 'ngx-markdown';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'loader',
   standalone: true,
-  imports: [CommonModule, FormsModule, MomentModule],
+  imports: [CommonModule, FormsModule, MomentModule, MarkdownComponent],
   providers: [],
   templateUrl: './loader.component.html',
   styleUrl: './loader.component.scss'
 })
-export class LoaderComponent {
+export class LoaderComponent implements OnInit {
 
-  name = (window as any)["STACK_CONTROLLER_NAME"] || 'Stack Controller';
-  patient_portal_url = (window as any)["PATIENT_PORTAL_BASE_URL"];
-  provider_portal_url = (window as any)["PROVIDER_PORTAL_BASE_URL"];
-  rules_url = (window as any)["RULES_BASE_URL"];
-  cds_url = (window as any)["CDS_BASE_URL"];
-  fhir_base_url = (window as any)["FHIR_BASE_URL"];
+  // name = (window as any)["STACK_CONTROLLER_NAME"] || 'Stack Controller';
+  // patient_portal_url = (window as any)["PATIENT_PORTAL_BASE_URL"];
+  // provider_portal_url = (window as any)["PROVIDER_PORTAL_BASE_URL"];
+  // rules_url = (window as any)["RULES_BASE_URL"];
+  // cds_url = (window as any)["CDS_BASE_URL"];
+  // fhir_base_url = (window as any)["FHIR_BASE_URL"];
 
   development: boolean = false;
 
   files_prefix = '/data/';
+  configuration_file = 'stack.json';
 
-  default_files: DataFile[] = [
-    { file: 'hospitalInformation1671557337568.json', load: true, name: 'Organization Bundle 1', description: 'Synthea-generated Organization records', type: 'Organization' },
-    { file: 'hospitalInformation1671557444542.json', load: true, name: 'Organization Bundle 2', description: 'Synthea-generated Organization records', type: 'Organization' },
-    { file: 'practitionerInformation1671557337568.json', load: true, name: 'Practioner Bundle 1', description: 'Synthea-generated Practitioner records', type: 'Practitioner' },
-    { file: 'practitionerInformation1671557444542.json', load: true, name: 'Practioner Bundle2 ', description: 'Synthea-generated Practitioner records', type: 'Practitioner' },
-    { file: 'Patient 1 - Adrian Allen1 - R5-Initial view.json', load: true, name: 'Patient 1 - Adrian Allen1', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 2 - Beth Brooks2 - R5-Initial view.json', load: true, name: 'Patient 2 - Beth Brooks2', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 3 - Carmen Chavez - R5-Initial view.json', load: true, name: 'Patient 3 - Carmen Chavez', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 4 - Diana Dixon4 - R5-Initial view.json', load: true, name: 'Patient 4 - Diana Dixon4', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 5 - Emma Edwards5 - R5-Initial view.json', load: true, name: 'Patient 5 - Emma Edwards5', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 8 - Hannah Hall8 - R5-Initial view.json', load: true, name: 'Patient 8 - Hannah Hall8', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 9 - Ian Ingram9 - R5-Initial view.json', load: true, name: 'Patient 9 - Ian Ingram9', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 10 - Justin Jordan10 - R5-Initial view.json', load: true, name: 'Patient 10 - Justin Jordan10', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 11 - Kobe King11 - R5-Initial view.json', load: true, name: 'Patient 11 - Kobe King11', description: 'Deidentified patient record from SHARES study.', type: 'Patient' },
-    { file: 'Patient 12 - Lisa Little12 - R5-Initial view.json', load: true, name: 'Patient 12 - Lisa Little12', description: 'Deidentified patient record from SHARES study.', type: 'Patient' }
-  ]
+  stack_configuration: StackConfiguration = new StackConfiguration();
+
+  // default_files: DataFile[] = [
+  // ]
+
   files_to_load: DataFile[] = [];
   state: 'default' | 'loading' | 'loaded' = 'default';
   errors: boolean = false;
@@ -56,16 +49,56 @@ export class LoaderComponent {
 
   constructor(
     protected http: HttpClient,
+    protected route: ActivatedRoute,
     protected toastService: ToastService
   ) {
-    this.reset();
   }
 
   reset() {
-    this.files_to_load = JSON.parse(JSON.stringify(this.default_files));
+    this.http.get<StackConfiguration>(this.configuration_file).subscribe({
+      next: data => {
+        this.loadStackConfiguration(data);
+      }, error: error => {
+        console.error('Error loading configuration file: ' + this.configuration_file);
+        console.error(error);
+        this.errors = true;
+        this.messages.unshift({ type: 'danger', body: 'Error loading configuration file: ' + this.configuration_file, date: new Date() });
+        this.toastService.showErrorToast('Error Loading Configuration', 'Could not load configuration file: ' + this.configuration_file);
+      }
+    });
+
+  }
+
+  ngOnInit() {
+    let url = this.route.queryParams.subscribe({
+      next: (params) => {
+        let url = params["url"];
+        if (url) {
+          console.log('Loading from URL: ' + url);
+          
+          this.http.get<StackConfiguration>(url).subscribe({
+            next: (data => {
+              this.loadStackConfiguration(data);
+            }),
+            error: (e => {
+              this.toastService.showWarningToast("Couldn't load URL", "The remote file URL couldn't be loaded, sorry. Check the URL and your connectivity and try again.");
+            })
+          });
+        } else {
+          console.log('No URL provided. Loading for default configuration file.');          
+          this.reset();
+        }
+      }
+    }
+    );
+
+  }
+
+  loadStackConfiguration(data: StackConfiguration) {
+    this.stack_configuration = data;
+    this.files_to_load = JSON.parse(JSON.stringify(this.stack_configuration.data));
     this.state = 'default';
     this.messages.unshift({ type: 'info', body: 'Controller has been reset.', date: new Date() });
-
   }
 
   load() {
@@ -87,7 +120,7 @@ export class LoaderComponent {
         next: data => {
           console.log('Downloaded file: ' + next.file);
           // console.log(data);
-          this.http.post(this.fhir_base_url, data, { headers: headers }).subscribe({
+          this.http.post(this.stack_configuration.fhir_base_url, data, { headers: headers }).subscribe({
             next: data => {
               this.toastService.showSuccessToast('Loaded ' + next.name, next.file);
               this.messages.unshift({ type: 'primary', body: 'Loaded ' + next.file, date: new Date() });
@@ -131,7 +164,7 @@ export class LoaderComponent {
         }
       ]
     }
-    this.http.post(this.fhir_base_url + '/$expunge', data).subscribe({
+    this.http.post(this.stack_configuration.fhir_base_url + '/$expunge', data).subscribe({
       next: data => {
         this.toastService.showSuccessToast('Expunge', 'Server reports that all data has been expunged!');
         this.messages.unshift({ type: 'primary', body: 'Expunge successful', date: new Date() });

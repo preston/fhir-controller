@@ -1,0 +1,13 @@
+{
+    "$schema": "stack.schema.json",
+    "title": "Empty Stack Controller Configuration",
+    "instructions": "No additional instructions provided.",
+    "fhir_base_url": "http://localhost:8080/fhir",
+    "links": [
+        {
+            "name": "FHIR Server",
+            "url": "http://localhost:8080"
+        }
+    ],
+    "data": []
+}
