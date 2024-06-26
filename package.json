@@ -1,7 +1,7 @@
 {
   "name": "stack",
   "description": "Skycapp default FHIR stack controller.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "ng": "ng",
     "start": "envsubst < public/configuration.template.js > public/configuration.js && ng serve",

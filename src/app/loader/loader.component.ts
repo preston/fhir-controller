@@ -33,7 +33,6 @@ export class LoaderComponent implements OnInit {
 
   development: boolean = false;
 
-  files_prefix = '/data/';
   configuration_file = 'stack.json';
 
   stack_configuration: StackConfiguration = new StackConfiguration();
@@ -116,7 +115,7 @@ export class LoaderComponent implements OnInit {
     headers = headers.set('Content-Type', 'application/json');
     let next = files.shift();
     if (next) {
-      this.http.get(this.files_prefix + next.file).subscribe({
+      this.http.get(next.file).subscribe({
         next: data => {
           console.log('Downloaded file: ' + next.file);
           // console.log(data);
