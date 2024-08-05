@@ -1,13 +1,71 @@
 {
     "$schema": "stack.schema.json",
-    "title": "Empty Stack Controller Configuration",
-    "instructions": "No additional instructions provided.",
+    "title": "Example Stack Controller Configuration",
+    "instructions": "Provide usage instructions here in markdown format.",
     "fhir_base_url": "http://localhost:8080/fhir",
+    "driver": "hapi",
     "links": [
         {
             "name": "FHIR Server",
             "url": "http://localhost:8080"
         }
     ],
-    "data": []
+    "data": [
+        {
+            "file": "http://localhost:4200/data/example/hospitalInformation1671557337568.json",
+            "load": true,
+            "name": "Organization Bundle 1",
+            "description": "Synthea-generated Organization records",
+            "type": "Organization Bundle"
+        },
+        {
+            "file": "data/example/hospitalInformation1671557444542.json",
+            "load": true,
+            "name": "Organization Bundle 2",
+            "description": "Synthea-generated Organization records",
+            "type": "Organization Bundle"
+        },
+        {
+            "file": "data/example/practitionerInformation1671557337568.json",
+            "load": true,
+            "name": "Practioner Bundle 1",
+            "description": "Synthea-generated Practitioner records",
+            "type": "Practitioner Bundle"
+        },
+        {
+            "file": "data/example/practitionerInformation1671557444542.json",
+            "load": true,
+            "name": "Practioner Bundle2 ",
+            "description": "Synthea-generated Practitioner records",
+            "type": "Practitioner Bundle"
+        },
+        {
+            "file": "data/example/Patient 1 - Adrian Allen1.json",
+            "load": true,
+            "name": "Patient 1 - Adrian Allen1",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient Bundle"
+        },
+        {
+            "file": "data/example/Patient 2 - Beth Brooks2.json",
+            "load": true,
+            "name": "Patient 2 - Beth Brooks2",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient Bundle"
+        },
+        {
+            "file": "data/example/Patient 3 - Carmen Chavez.json",
+            "load": true,
+            "name": "Patient 3 - Carmen Chavez",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient Bundle"
+        },
+        {
+            "file": "data/example/Patient 4 - Diana Dixon4.json",
+            "load": true,
+            "name": "Patient 4 - Diana Dixon4",
+            "description": "Deidentified patient record from SHARES study.",
+            "type": "Patient Bundle"
+        }
+    ]
 }

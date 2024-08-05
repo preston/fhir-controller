@@ -1,3 +1,4 @@
+<!-- <span id='fire-icon' class="bi bi-fire">  </span> -->
 <div id="loader" class="container my-4 p-4">
     <div class="row">
         <div class="col-sm-12">
@@ -7,8 +8,12 @@
     </div>
     <div class="row mt-4">
         <div class="col-sm-8">
-            <h4>Data Controls</h4>
-            <div class="input-group">
+            <h4>Data Controls
+                <button class="me-2 btn btn-sm btn-outline-secondary" role="button" (click)="reloadStackConfiguration()"
+                    [disabled]="state == 'loading'"><span class="bi bi-arrow-clockwise"></span>
+                    Reload Form</button>
+            </h4>
+            <div class="input-group input-group-sm">
                 <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
                 <input type="text" class="form-control" [(ngModel)]="stack_configuration.fhir_base_url" />
             </div>
@@ -32,21 +37,20 @@
                     configuration file if you'd like to load FHIR bundles.</span>
             </div>
             <div *ngIf="files_to_load.length > 0" class="list-group">
-                <div class="btn-group mt-1 me-2">
-                    <button class="btn btn-lg btn-primary" role="button" (click)="load()"
+                <h4 class="mt-4">Files
+                    <a role="button" class="btn btn-sm btn-outline-secondary" (click)="toggleSelected()"> <span
+                            class="bi bi-check-square"></span> Toggle Selections</a>
+                </h4>
+                <div class="mt-1 me-2">
+                    <button class="me-2 btn btn-md btn-primary" role="button" (click)="load()"
                         [disabled]="state == 'loading'"><span class="bi bi-save"> Load
                             Selected Files</span></button>
-                    <button class="btn btn-lg btn-primary" role="button" (click)="reset()"
-                        [disabled]="state == 'loading'"><span class="bi bi-arrow-clockwise"></span>
-                        Reset Form</button>
                     <button *ngIf="development" class="btn btn-lg btn-secondary" role="button" (click)="test()"><span
                             class="bi bi-chat"></span>
                         Test</button>
+
                 </div>
-                <h4 class="mt-4">Files
-                    <a role="button" class="btn btn-sm btn-primary" (click)="toggleSelected()"> <span
-                            class="bi bi-check-square"></span> Toggle Selected</a>
-                </h4>
+
                 <span class="fw-lighter">The following data files will be loading in the following sequence.
                 </span>
                 <span *ngFor="let f of files_to_load" class="list-group-item">
@@ -67,29 +71,42 @@
                 </span>
             </div>
 
-            <div class="btn-group mt-3">
-                <button class="btn btn-lg btn-danger" role="button" (click)="expunge()"
-                    [disabled]="state == 'loading'"><span class="bi bi-save"> Expunge All FHIR Server
-                        Data</span></button>
-
-            </div>
         </div>
         <div class="col-sm-4">
 
+            <section class="mt-4">
+                <h4>Server Utilities</h4>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text"><i class="bi-fire"></i>&nbsp;Driver</span>
+                    <select class="form-control" [(ngModel)]="stack_configuration.driver"
+                        (ngModelChange)="changeDriver()">
+                        <option [value]="driverTypes().Generic"
+                            [selected]="stack_configuration.driver == driverTypes().Generic">Generic</option>
+                        <option [value]="driverTypes().Hapi"
+                            [selected]="stack_configuration.driver == driverTypes().Hapi">HAPI FHIR</option>
+                        <option [value]="driverTypes().WildFHIR"
+                            [selected]="stack_configuration.driver == driverTypes().WildFHIR">Aegis WildFHIR</option>
+                    </select>
+                </div>
+                <span class="fw-lighter">Unimplemented or
+                    incompatible functions of <b>{{driver.name}}</b> will be disabled.</span>
+                <button class="btn btn-md btn-danger" role="button" (click)="resetServerData()"
+                    [disabled]="driver.supports_reset() == false || state == 'loading'"><span class="bi bi-trash"> Permanently Reset Server Data</span></button>
+            </section>
 
-            <h4>Control Messages</h4>
-            <span class="fw-lighter">Your activity history.</span>
-            <ul class="list-group">
-                <li *ngFor="let m of messages" class="list-group-item" [class]="'list-group-item-' + m.type">
-                    <div class="d-flex w-100 justify-content-between">
-                        {{m.body}}
-                        <small> {{m.date | amTimeAgo}}</small>
-                    </div>
+            <section class="mt-4">
+                <h4>Controller Messages</h4>
+                <span class="fw-lighter">Your activity history.</span>
+                <ul class="list-group">
+                    <li *ngFor="let m of messages" class="list-group-item" [class]="'list-group-item-' + m.type">
+                        <div class="d-flex w-100 justify-content-between">
+                            {{m.body}}
+                            <small> {{m.date | amTimeAgo}}</small>
+                        </div>
 
-
-
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </section>
 
         </div>
     </div>

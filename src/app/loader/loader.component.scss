@@ -1,6 +1,15 @@
 #loader {
     background: url(/images/textures/crossword.png) repeat center center fixed;
-
+    position: relative;
     border-radius: 4px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5);
+}
+
+#fire-icon {
+    position: absolute;
+    z-index: 10;
+    top: -500px;
+    left: -200px;
+    color: rgba(0,0,0,.02);
+    font-size: 80em;
 }

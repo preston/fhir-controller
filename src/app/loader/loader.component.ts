@@ -13,6 +13,10 @@ import { ToastService } from '../toast/toast.service';
 import { StackConfiguration } from './stack_configuration';
 import { MarkdownComponent } from 'ngx-markdown';
 import { ActivatedRoute } from '@angular/router';
+import { GenericDriver } from '../driver/generic_driver';
+import { HapiFhirDriver } from '../driver/hapi_driver';
+import { WildFhirDriver } from '../driver/wildfhir_driver';
+import { DriverType } from '../driver/driver_type';
 
 @Component({
   selector: 'loader',
@@ -39,12 +43,15 @@ export class LoaderComponent implements OnInit {
 
   // default_files: DataFile[] = [
   // ]
+  // driver_type: DriverType = DriverType.Generic;
+  driver: GenericDriver = new GenericDriver(this.stack_configuration, this.http);
 
   files_to_load: DataFile[] = [];
   state: 'default' | 'loading' | 'loaded' = 'default';
   errors: boolean = false;
 
   messages: LoaderMessage[] = [];
+
 
   constructor(
     protected http: HttpClient,
@@ -53,7 +60,30 @@ export class LoaderComponent implements OnInit {
   ) {
   }
 
-  reset() {
+  changeDriver() {
+    switch (this.stack_configuration.driver) {
+      case 'hapi':
+        this.driver = new HapiFhirDriver(this.stack_configuration, this.http);
+        console.log('Using HAPI driver.');
+        break;
+      case 'wildfhir':
+        this.driver = new WildFhirDriver(this.stack_configuration, this.http);
+        console.log('Using WildFHIR driver.');
+        break;
+      default:
+        // Use the generic driver by default.
+        this.stack_configuration.driver = DriverType.Generic;
+        this.driver = new GenericDriver(this.stack_configuration, this.http);
+        console.log('Using generic driver.');
+        break;
+    }
+  }
+
+  driverTypes() {
+    return DriverType;
+  }
+
+  reloadStackConfiguration() {
     this.http.get<StackConfiguration>(this.configuration_file).subscribe({
       next: data => {
         this.loadStackConfiguration(data);
@@ -74,7 +104,7 @@ export class LoaderComponent implements OnInit {
         let url = params["url"];
         if (url) {
           console.log('Loading from URL: ' + url);
-          
+
           this.http.get<StackConfiguration>(url).subscribe({
             next: (data => {
               this.loadStackConfiguration(data);
@@ -84,8 +114,8 @@ export class LoaderComponent implements OnInit {
             })
           });
         } else {
-          console.log('No URL provided. Loading for default configuration file.');          
-          this.reset();
+          console.log('No URL provided. Loading for default configuration file.');
+          this.reloadStackConfiguration();
         }
       }
     }
@@ -97,7 +127,8 @@ export class LoaderComponent implements OnInit {
     this.stack_configuration = data;
     this.files_to_load = JSON.parse(JSON.stringify(this.stack_configuration.data));
     this.state = 'default';
-    this.messages.unshift({ type: 'info', body: 'Controller has been reset.', date: new Date() });
+    this.changeDriver();
+    this.messages.unshift({ type: 'info', body: 'Controller configuration has been reloaded.', date: new Date() });
   }
 
   load() {
@@ -114,10 +145,15 @@ export class LoaderComponent implements OnInit {
     headers = headers.set('Accept', 'application/json');
     headers = headers.set('Content-Type', 'application/json');
     let next = files.shift();
+    if (next && !next.file.startsWith('http://') && next.file.startsWith('https://')) {
+      next = Object.assign({}, next);
+      next.file = window.location.href + '/' + next.file;
+      console.log('Adjusted file path: ' + next.file);
+    }
     if (next) {
       this.http.get(next.file).subscribe({
         next: data => {
-          console.log('Downloaded file: ' + next.file);
+          // console.log('Downloaded file: ' + next.file);
           // console.log(data);
           this.http.post(this.stack_configuration.fhir_base_url, data, { headers: headers }).subscribe({
             next: data => {
@@ -131,6 +167,7 @@ export class LoaderComponent implements OnInit {
               this.messages.unshift({ type: 'danger', body: 'Could not load ' + next.file, date: new Date() });
               console.error('Error loading file: ' + next.file);
               console.error(error);
+              this.state = 'loaded';
             }
           });
         }, error: error => {
@@ -138,6 +175,7 @@ export class LoaderComponent implements OnInit {
           this.messages.unshift({ type: 'danger', body: 'Could not download ' + next.file, date: new Date() });
           console.error('Error downloading file: ' + next.file);
           console.error(error);
+          this.state = 'loaded';
         }
       });
     } else {
@@ -153,30 +191,22 @@ export class LoaderComponent implements OnInit {
 
   }
 
-  expunge() {
-    let data = {
-      "resourceType": "Parameters",
-      "parameter": [
-        {
-          "name": "expungeEverything",
-          "valueBoolean": true
-        }
-      ]
-    }
-    this.http.post(this.stack_configuration.fhir_base_url + '/$expunge', data).subscribe({
+  resetServerData() {
+    this.driver.reset().subscribe({
       next: data => {
-        this.toastService.showSuccessToast('Expunge', 'Server reports that all data has been expunged!');
-        this.messages.unshift({ type: 'primary', body: 'Expunge successful', date: new Date() });
+        this.toastService.showSuccessToast('Expunge', 'Server reports that all data has been reset!');
+        this.messages.unshift({ type: 'primary', body: 'Server reset successful', date: new Date() });
         console.log('Expunge successful');
         console.log(data);
       }, error: error => {
-        this.toastService.showErrorToast('Error Expunging', 'The server return an error from the expunge operation');
-        this.messages.unshift({ type: 'danger', body: 'Error expunging', date: new Date() });
+        this.toastService.showErrorToast('Error Expunging', 'The server return an error from the data reset attempt.');
+        this.messages.unshift({ type: 'danger', body: 'Error reseting data', date: new Date() });
         console.error('Error expunging');
         console.error(error);
       }
     });
   }
+
   test() {
     this.toastService.showSuccessToast('Test Message', 'Yay.');
     this.messages.unshift({ type: 'info', body: 'It works.', date: new Date() });

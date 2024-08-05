@@ -9,7 +9,8 @@
         "instructions",
         "data",
         "fhir_base_url",
-        "links"
+        "links",
+        "driver"
     ],
     "properties": {
         "title": {
@@ -19,6 +20,15 @@
         "instructions": {
             "description": "Human-readable user instructinos for how to use this controller, in markdown format.",
             "type": "string"
+        },
+        "driver": {
+            "description": "The specific FHIR server implementation.",
+            "type": "string",
+            "enum": [
+                "generic",
+                "hapi",
+                "wildfhir"
+            ]
         },
         "data": {
             "type": "array",
@@ -55,6 +65,7 @@
     "$defs": {
         "data_file": {
             "type": "object",
+            "description": "An absolute URL that must start with 'http://' or 'https://', or assumed to be a path relative to the application base URL.",
             "required": [
                 "file",
                 "load",
