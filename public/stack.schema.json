@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://schema.skycapp.com/stack.schema.json",
+    "$id": "https://stack.skycapp.com/stack.schema.json",
     "title": "FHIR Stack Controller Configuration Schema.",
     "description": "For configuration files used by FHIR stack controllers.",
     "type": "object",

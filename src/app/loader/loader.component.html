@@ -90,8 +90,10 @@
                 </div>
                 <span class="fw-lighter">Unimplemented or
                     incompatible functions of <b>{{driver.name}}</b> will be disabled.</span>
+                <br />
                 <button class="btn btn-md btn-danger" role="button" (click)="resetServerData()"
-                    [disabled]="driver.supports_reset() == false || state == 'loading'"><span class="bi bi-trash"> Permanently Reset Server Data</span></button>
+                    [disabled]="driver.supports_reset() == false || state == 'loading'"><span class="bi bi-trash">
+                        Permanently Reset Server Data</span></button>
             </section>
 
             <section class="mt-4">
