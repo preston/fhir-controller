@@ -3,5 +3,6 @@
 export enum DriverType {
     Generic = 'generic',
     Hapi = 'hapi',
-    WildFHIR = 'wildfhir'
+    WildFHIR = 'wildfhir',
+    FHIRCandle = 'fhircandle'
 }

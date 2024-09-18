@@ -17,6 +17,7 @@ import { GenericDriver } from '../driver/generic_driver';
 import { HapiFhirDriver } from '../driver/hapi_driver';
 import { WildFhirDriver } from '../driver/wildfhir_driver';
 import { DriverType } from '../driver/driver_type';
+import { FhirCandleDriver } from '../driver/fhir_candle_driver';
 
 @Component({
   selector: 'loader',
@@ -62,13 +63,17 @@ export class LoaderComponent implements OnInit {
 
   changeDriver() {
     switch (this.stack_configuration.driver) {
-      case 'hapi':
+      case DriverType.Hapi:
         this.driver = new HapiFhirDriver(this.stack_configuration, this.http);
         console.log('Using HAPI driver.');
         break;
-      case 'wildfhir':
+      case DriverType.WildFHIR:
         this.driver = new WildFhirDriver(this.stack_configuration, this.http);
         console.log('Using WildFHIR driver.');
+        break;
+      case DriverType.FHIRCandle:
+        this.driver = new FhirCandleDriver(this.stack_configuration, this.http);
+        console.log('Using FHIR Candle driver.');
         break;
       default:
         // Use the generic driver by default.
