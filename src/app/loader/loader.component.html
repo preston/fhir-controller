@@ -86,6 +86,8 @@
                             [selected]="stack_configuration.driver == driverTypes().Hapi">HAPI FHIR</option>
                         <option [value]="driverTypes().WildFHIR"
                             [selected]="stack_configuration.driver == driverTypes().WildFHIR">Aegis WildFHIR</option>
+                        <option [value]="driverTypes().FHIRCandle"
+                            [selected]="stack_configuration.driver == driverTypes().FHIRCandle">FHIR Candle</option>
                     </select>
                 </div>
                 <span class="fw-lighter">Unimplemented or
