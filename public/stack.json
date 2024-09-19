@@ -12,7 +12,7 @@
     ],
     "data": [
         {
-            "file": "http://localhost:4200/data/example/hospitalInformation1671557337568.json",
+            "file": "data/example/hospitalInformation1671557337568.json",
             "load": true,
             "name": "Organization Bundle 1",
             "description": "Synthea-generated Organization records",

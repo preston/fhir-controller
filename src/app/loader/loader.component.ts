@@ -39,6 +39,7 @@ export class LoaderComponent implements OnInit {
   development: boolean = false;
 
   configuration_file = 'stack.json';
+  // configuration_file_url: string | undefined;
 
   stack_configuration: StackConfiguration = new StackConfiguration();
 
@@ -61,6 +62,30 @@ export class LoaderComponent implements OnInit {
   ) {
   }
 
+
+  ngOnInit() {
+    let url = this.route.queryParams.subscribe({
+      next: (params) => {
+        let url = params["url"];
+        if (url) {
+          console.log('Loading from URL: ' + url);
+          this.configuration_file = url;
+          this.http.get<StackConfiguration>(this.configuration_file).subscribe({
+            next: (data => {
+              this.loadStackConfiguration(data);
+            }),
+            error: (e => {
+              this.toastService.showWarningToast("Couldn't load URL", "The remote file URL couldn't be loaded, sorry. Check the URL and your connectivity and try again.");
+            })
+          });
+        } else {
+          console.log('No URL provided. Loading for default configuration file.');
+          this.reloadStackConfiguration();
+        }
+      }
+    }
+    );
+  }
   changeDriver() {
     switch (this.stack_configuration.driver) {
       case DriverType.Hapi:
@@ -103,30 +128,6 @@ export class LoaderComponent implements OnInit {
 
   }
 
-  ngOnInit() {
-    let url = this.route.queryParams.subscribe({
-      next: (params) => {
-        let url = params["url"];
-        if (url) {
-          console.log('Loading from URL: ' + url);
-
-          this.http.get<StackConfiguration>(url).subscribe({
-            next: (data => {
-              this.loadStackConfiguration(data);
-            }),
-            error: (e => {
-              this.toastService.showWarningToast("Couldn't load URL", "The remote file URL couldn't be loaded, sorry. Check the URL and your connectivity and try again.");
-            })
-          });
-        } else {
-          console.log('No URL provided. Loading for default configuration file.');
-          this.reloadStackConfiguration();
-        }
-      }
-    }
-    );
-
-  }
 
   loadStackConfiguration(data: StackConfiguration) {
     this.stack_configuration = data;
@@ -150,12 +151,20 @@ export class LoaderComponent implements OnInit {
     headers = headers.set('Accept', 'application/json');
     headers = headers.set('Content-Type', 'application/json');
     let next = files.shift();
-    if (next && !next.file.startsWith('http://') && next.file.startsWith('https://')) {
-      next = Object.assign({}, next);
-      next.file = window.location.href + '/' + next.file;
-      console.log('Adjusted file path: ' + next.file);
-    }
     if (next) {
+      // if (next && !next.file.startsWith('http://') && next.file.startsWith('https://')) {
+      // if (next.file.startsWith('https://')) {
+      //   next = Object.assign({}, next);
+      //   next.file = window.location.href + '/' + next.file;
+      //   console.log('Adjusted file path: ' + next.file);
+      // }
+      // If the controller configuration file was loaded from a URL *and* the next file is a relative path,
+      // then we need to adjust the path to be relative to where the controller configuration file was loaded from.
+      if (this.configuration_file.startsWith('http') && !next.file.startsWith('http')) {
+        // TODO There is probably a better way to do this.
+        let base_url = this.configuration_file.substring(0, this.configuration_file.lastIndexOf('/'));
+        next.file = base_url + '/' + next.file;
+      }
       this.http.get(next.file).subscribe({
         next: data => {
           // console.log('Downloaded file: ' + next.file);
