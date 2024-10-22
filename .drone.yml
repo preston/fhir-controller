@@ -7,11 +7,15 @@ platform:
   os: linux
 steps:
   - name: publish
+    environment:
+      arch: amd64
+      os: linux
+      eu: eouth
     image: plugins/docker
     settings:
       repo:
         from_secret: docker_repository
-      tags: [latest, latest-amd64]
+      tags: [latest-amd64]
       username:
         from_secret: docker_username
       password:
@@ -41,3 +45,23 @@ steps:
 trigger:
   branch:
     - master
+---
+name: manifest
+kind: pipeline
+type: docker
+steps:
+  - name: publish-manifest
+    image: plugins/manifest
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      target: p3000/skycapp-fhir-stack-controller:latest
+      # template: foo/bar:v1.0.0-OS-ARCH
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    depends_on:
+      - latest-amd64
+      - latest-arm64
