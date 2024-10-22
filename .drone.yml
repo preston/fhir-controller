@@ -49,6 +49,9 @@ trigger:
 name: manifest
 kind: pipeline
 type: docker
+depends_on:
+  - latest-amd64
+  - latest-arm64
 steps:
   - name: publish-manifest
     image: plugins/manifest
@@ -62,6 +65,4 @@ steps:
       platforms:
         - linux/amd64
         - linux/arm64
-    depends_on:
-      - latest-amd64
-      - latest-arm64
+ 
