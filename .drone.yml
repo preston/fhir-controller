@@ -7,15 +7,10 @@ platform:
   os: linux
 steps:
   - name: publish
-    environment:
-      arch: amd64
-      os: linux
-      eu: eouth
     image: plugins/docker
     settings:
-      repo:
-        from_secret: docker_repository
-      tags: [latest-amd64]
+      repo: p3000/skycapp-fhir-stack-controller
+      tags: [latest-linux-amd64]
       username:
         from_secret: docker_username
       password:
@@ -34,9 +29,8 @@ steps:
   - name: publish
     image: plugins/docker
     settings:
-      repo:
-        from_secret: docker_repository
-      tags: [latest-arm64]
+      repo: p3000/skycapp-fhir-stack-controller
+      tags: [latest-linux-arm64]
       # auto_tag: true
       username:
         from_secret: docker_username
@@ -61,8 +55,10 @@ steps:
       password:
         from_secret: docker_password
       target: p3000/skycapp-fhir-stack-controller:latest
-      # template: foo/bar:v1.0.0-OS-ARCH
+      template: p3000/skycapp-fhir-stack-controller:latest-OS-ARCH
       platforms:
         - linux/amd64
         - linux/arm64
- 
+trigger:
+   status:
+     - success
