@@ -1,4 +1,4 @@
-FROM node:22-alpine as builder
+FROM node:22-alpine AS builder
 LABEL maintainer="preston.lee@prestonlee.com"
 
 # Install dependencies first so they layer can be cached across builds.
@@ -26,4 +26,5 @@ RUN rm -rf *
 COPY --from=builder /app/dist/stack/browser .
 
 # CMD ["./configure-from-environment.sh", "&&", "exec", "nginx", "-g", "'daemon off;'"]
-CMD envsubst < configuration.template.js > configuration.js  && exec nginx -g 'daemon off;'
+# CMD envsubst < configuration.template.js > configuration.js  && exec nginx -g 'daemon off;'
+CMD ["envsubst", "<", "configuration.template.js", ">", "configuration.js", "&&", "exec", "nginx", "-g", "'daemon off;'"]
