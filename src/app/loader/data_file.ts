@@ -6,4 +6,5 @@ export class DataFile {
     public name: string = '';
     public description: string = '';
     public type: string = '';
+    public priority: number = 1;
 }

@@ -72,7 +72,8 @@
                 "load",
                 "name",
                 "description",
-                "type"
+                "type",
+                "priority"
             ],
             "properties": {
                 "file": {
@@ -94,6 +95,11 @@
                 "type": {
                     "description": "A brief text label used for UI purposes only. Does not affect data loading or processing.",
                     "type": "string"
+                },
+                "priority": {
+                    "description": "The order in which to load the data files. Lower numbers are loaded first.",
+                    "type": "integer",
+                    "default": 1
                 }
             }
         }

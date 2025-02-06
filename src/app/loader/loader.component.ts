@@ -131,7 +131,8 @@ export class LoaderComponent implements OnInit {
 
   loadStackConfiguration(data: StackConfiguration) {
     this.stack_configuration = data;
-    this.files_to_load = JSON.parse(JSON.stringify(this.stack_configuration.data));
+    const tmp: DataFile[] = JSON.parse(JSON.stringify(this.stack_configuration.data));
+    this.files_to_load = tmp.sort((a, b) => { return a.priority - b.priority });
     this.state = 'default';
     this.changeDriver();
     this.messages.unshift({ type: 'info', body: 'Controller configuration has been reloaded.', date: new Date() });
