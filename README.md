@@ -18,10 +18,10 @@ When the stack controller loads, must be provided a configuration file either by
 
 ### Building Your Own Image Configuration
 
-See https://github.com/asushares/stack for a working example of how to use this image. The general steps are:
+See https://github.com/asushares/stack for a working example of how to create a Dockerfile using this base image. The general steps are:
 
-1. Put your JSON FHIR bundle files in the `/public` directory. Everything you place here will be copied into the image and downloadable from the root `/` path.
-1. Create a `stack.json` file defining the controller name, data file load order, and other metadata.
+1. Copy your files into the image, e.g. `COPY /whatever .`. The contents copied into the image will be downloadable from the root `/` path.
+1. Create and copy in a `stack.json` file defining the controller name, data file load order, and other metadata to load by default.
 1. Build it! Once running, it can be used as an entrypoint UI for building a tutorial of using your application stack with built-in FHIR data bundle loading and FHIR server resets. Note: "Expunging" data requires your FHIR server to support the "$expunge" operation. 
 
 See [stack.schema.json](public/stack.schema.json) for the JSON schema.
