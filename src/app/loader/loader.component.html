@@ -1,19 +1,19 @@
 <!-- <span id='fire-icon' class="bi bi-fire">  </span> -->
-<div id="loader" class="container my-4 p-4">
-    <div class="row">
+<div id="loader" class="container-fluid">
+    <div class="row p-4">
         <div class="col-sm-12">
             <h1>{{stack_configuration.title}}</h1>
             <markdown [data]="stack_configuration.instructions"></markdown>
         </div>
     </div>
-    <div class="row mt-4">
+    <div class="row mt-4 p-4">
         <div class="col-sm-8">
             <h4>Data Controls
                 <button class="me-2 btn btn-sm btn-outline-secondary" role="button" (click)="reloadStackConfiguration()"
                     [disabled]="state == 'loading'"><span class="bi bi-arrow-clockwise"></span>
                     Reload Form</button>
             </h4>
-            <div class="input-group input-group-sm">
+            <div class="input-group input-group-md">
                 <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
                 <input type="text" class="form-control" [(ngModel)]="stack_configuration.fhir_base_url" />
             </div>
@@ -30,7 +30,7 @@
             </section>
         </div>
     </div>
-    <div class="row my-4">
+    <div class="row my-4 p-4">
         <div class="col-sm-8">
             <div *ngIf="files_to_load.length == 0">
                 <span class="badge bg-warning">No data files have been configured to load. Please update the controller
@@ -38,39 +38,42 @@
             </div>
             <div *ngIf="files_to_load.length > 0" class="list-group">
                 <h4 class="mt-4">Files
-                    <a role="button" class="btn btn-sm btn-outline-secondary" (click)="toggleSelected()"> <span
-                            class="bi bi-check-square"></span> Toggle Selections</a>
+                    <button role="button" class="btn btn-sm btn-outline-secondary" (click)="toggleSelected()"> <span
+                            class="bi bi-check-square"></span> Toggle Selections</button>
                 </h4>
                 <div class="mt-1 me-2">
-                    <button class="me-2 btn btn-md btn-primary" role="button" (click)="load()"
-                        [disabled]="state == 'loading'"><span class="bi bi-save"> Load
-                            Selected Files</span></button>
+                    <button class="me-2 btn btn-md btn-success" role="button" (click)="load()"
+                        [disabled]="state == 'loading'"><span class="bi bi-save"> Load Selected File Sequence</span></button>
                     <button *ngIf="development" class="btn btn-lg btn-secondary" role="button" (click)="test()"><span
                             class="bi bi-chat"></span>
                         Test</button>
 
                 </div>
 
-                <span class="fw-lighter">The following data files will be loading in the following sequence.
-                </span>
-                <span *ngFor="let f of files_to_load" class="list-group-item">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">
-                            <input class="form-check-input me-1" role="button" [(ngModel)]="f.load" type="checkbox" />
-                            <a role="button" [href]="f.file" target="_blank">
-                                {{f.name}}
-                            </a>
-                        </h5>
-
-                        <small>{{f.type}}
-                            <br>
-                            <i>Priority: {{f.priority}}</i>
-                        </small>
-                    </div>
-                    <p class="mb-1">{{f.description}}</p>
-                    <small>{{f.file}}</small>
-                    <!-- <span class="badge text-bg-primary rounded-pill">14</span> -->
-                </span>
+                <div class="my-2">
+                    <!-- <span class="fw-lighter">The following data files will be loading in the following sequence. </span> -->
+                    <span *ngFor="let f of files_to_load" class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">
+                                <div class="form-check form-switch form-check-secondary">
+                                    <input class="form-check-input me-1" role="checkbox" [(ngModel)]="f.load"
+                                    type="checkbox" />
+                                    <a role="button" [href]="f.file" target="_blank">
+                                        {{f.name}}
+                                    </a>
+                                </div>
+                            </h5>
+                            
+                            <small>{{f.type}}
+                                <br>
+                                <i>Priority: {{f.priority}}</i>
+                            </small>
+                        </div>
+                        <p class="mb-1">{{f.description}}</p>
+                        <small>{{f.file}}</small>
+                        <!-- <span class="badge text-bg-primary rounded-pill">14</span> -->
+                    </span>
+                </div>
             </div>
 
         </div>
@@ -95,12 +98,12 @@
                 <span class="fw-lighter">Unimplemented or
                     incompatible functions of <b>{{driver.name}}</b> will be disabled.</span>
                 <br />
-                <button class="btn btn-md btn-danger" role="button" (click)="resetServerData()"
+                <button class="btn btn-md btn-warning" role="button" (click)="resetServerData()"
                     [disabled]="driver.supports_reset() == false || state == 'loading'"><span class="bi bi-trash">
                         Permanently Reset Server Data</span></button>
             </section>
 
-            <section class="mt-4">
+            <section class="mt-4 pt-4">
                 <h4>Controller Messages</h4>
                 <span class="fw-lighter">Your activity history.</span>
                 <ul class="list-group">

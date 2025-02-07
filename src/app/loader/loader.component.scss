@@ -1,8 +1,12 @@
 #loader {
-    background: url(/images/textures/crossword.png) repeat center center fixed;
+    background: url(/images/textures/prism.png) repeat center center fixed;
     position: relative;
     border-radius: 4px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5);
+
+   .row:first-child {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 }
 
 #fire-icon {

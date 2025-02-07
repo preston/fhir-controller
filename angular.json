@@ -28,12 +28,12 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets"
               }
             ],
             "styles": [
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "src/litera.min.css",
+              "src/simplex.css",
               "src/styles.scss",
               "node_modules/ngx-toastr/toastr.css"
             ],
@@ -94,7 +94,7 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets"
               }
             ],
             "styles": [

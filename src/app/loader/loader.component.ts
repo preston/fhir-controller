@@ -122,7 +122,7 @@ export class LoaderComponent implements OnInit {
         console.error(error);
         this.errors = true;
         this.messages.unshift({ type: 'danger', body: 'Error loading configuration file: ' + this.configuration_file, date: new Date() });
-        this.toastrService.error( 'Could not load configuration file: ' + this.configuration_file, 'Error Loading Configuration');
+        this.toastrService.error('Could not load configuration file: ' + this.configuration_file, 'Error Loading Configuration');
       }
     });
 
@@ -143,7 +143,6 @@ export class LoaderComponent implements OnInit {
     this.messages.unshift({ type: 'info', body: 'Starting load operations...', date: new Date() });
     let filtered = this.files_to_load.filter(f => { return f.load });
     console.log('Loading ' + filtered.length + ' files...');
-
     this.loadNextFile(filtered);
   }
 
@@ -173,12 +172,12 @@ export class LoaderComponent implements OnInit {
           this.http.post(this.stack_configuration.fhir_base_url, data, { headers: headers }).subscribe({
             next: data => {
               this.toastrService.success(next.file, 'Loaded ' + next.name);
-              this.messages.unshift({ type: 'primary', body: 'Loaded ' + next.file, date: new Date() });
+              this.messages.unshift({ type: 'success', body: 'Loaded ' + next.file, date: new Date() });
               console.log('Loaded: ' + next.file);
               this.loadNextFile(files);
               // console.log(data);
             }, error: error => {
-              this.toastrService.error( next.file, 'Error Loading');
+              this.toastrService.error(next.file, 'Error Loading');
               this.messages.unshift({ type: 'danger', body: 'Could not load ' + next.file, date: new Date() });
               console.error('Error loading file: ' + next.file);
               console.error(error);
@@ -186,7 +185,7 @@ export class LoaderComponent implements OnInit {
             }
           });
         }, error: error => {
-          this.toastrService.error( next.file, 'File Not Downloaded');
+          this.toastrService.error(next.file, 'File Not Downloaded');
           this.messages.unshift({ type: 'danger', body: 'Could not download ' + next.file, date: new Date() });
           console.error('Error downloading file: ' + next.file);
           console.error(error);
@@ -209,12 +208,12 @@ export class LoaderComponent implements OnInit {
   resetServerData() {
     this.driver.reset().subscribe({
       next: data => {
-        this.toastrService.success( 'Server reports that all data has been reset!', 'Expunge');
-        this.messages.unshift({ type: 'primary', body: 'Server reset successful', date: new Date() });
+        this.toastrService.success('Server reports that all data has been reset!', 'Expunge');
+        this.messages.unshift({ type: 'success', body: 'Server reset successful', date: new Date() });
         console.log('Expunge successful');
         console.log(data);
       }, error: error => {
-        this.toastrService.error( 'The server return an error from the data reset attempt.', 'Error Expunging');
+        this.toastrService.error('The server return an error from the data reset attempt.', 'Error Expunging');
         this.messages.unshift({ type: 'danger', body: 'Error reseting data', date: new Date() });
         console.error('Error expunging');
         console.error(error);
