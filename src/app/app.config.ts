@@ -2,19 +2,22 @@
 
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
-import { routes } from './app.routes';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
-import { ToastService } from './toast/toast.service';
+import { provideAnimations } from '@angular/platform-browser/animations';
+
 import { MomentModule } from 'ngx-moment';
 import { MarkdownModule } from 'ngx-markdown';
+import { provideToastr } from 'ngx-toastr';
+
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    ToastService,
     importProvidersFrom(BrowserModule, FormsModule, MomentModule, MarkdownModule.forRoot()),
+    provideAnimations(), // required animations providers
+    provideToastr(), // Toastr providers
     provideHttpClient(withInterceptorsFromDi()),
     provideZoneChangeDetection({ eventCoalescing: true }),
      provideRouter(routes)]
