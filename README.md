@@ -24,7 +24,7 @@ See https://github.com/asushares/stack for a working example of how to create a 
 1. Create and copy in a `stack.json` file defining the controller name, data file load order, and other metadata to load by default.
 1. Build it! Once running, it can be used as an entrypoint UI for building a tutorial of using your application stack with built-in FHIR data bundle loading and FHIR server resets. Note: "Expunging" data requires a supported non-standard operation of the underlying FHIR server.
 
-See [stack.schema.json](public/stack.schema.json) for the JSON schema.
+See [stack.schema.json](src/assets/stack.schema.json) for the JSON schema.
 
 ## License
 
