@@ -5,7 +5,7 @@ This base image, intended to be directly extended with your own data files, prov
 1. Presenting your Markdown-formatted instructions or tutorial. 
 1. Loading a preset sequence of FHIR bundles to a given FHIR server in order.
 1. Providing ordered resource links to guide the user through initial usage.
-1. Deleting of all records en masse, if supported by the server driver. Currently this is only supported by the HAPI driver that relies on a HAPI-specific "$expunge" operation.
+1. Deleting of all records en masse, if supported by the server driver. Currently this is supported by the HAPI and WildFHIR drivers that use non-standard operations.
 
 The stack controller operates purely in-browser and makes all FHIR API calls via REST. There are no other server-side API calls.
 
