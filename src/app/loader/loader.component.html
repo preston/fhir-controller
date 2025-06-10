@@ -56,11 +56,11 @@
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">
                                 <div class="form-check form-switch form-check-secondary">
+                                    <span *ngIf="f.loader === loaderTypes().CQL_AS_FHIR_LIBRARY" class="bi bi-code"></span>
+                                    <span *ngIf="f.loader === loaderTypes().FHIR_BUNDLE || !f.loader" class="bi bi-fire"></span>
                                     <input class="form-check-input me-1" role="checkbox" [(ngModel)]="f.load"
                                     type="checkbox" />
-                                    <a role="button" [href]="f.file" target="_blank">
-                                        {{f.name}}
-                                    </a>
+                                    &nbsp;<a role="button" [href]="f.file" target="_blank">{{f.name}}</a>
                                 </div>
                             </h5>
                             

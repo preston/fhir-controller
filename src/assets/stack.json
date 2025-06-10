@@ -12,7 +12,7 @@
     ],
     "data": [
         {
-            "file": "data/example/hospitalInformation1671557337568.json",
+            "file": "data/example/fhir/hospitalInformation1671557337568.json",
             "load": true,
             "name": "Organization Bundle 1",
             "description": "Synthea-generated Organization records",
@@ -20,16 +20,15 @@
             "priority": 0
         },
         {
-            "file": "data/example/hospitalInformation1671557444542.json",
+            "file": "data/example/fhir/hospitalInformation1671557444542.json",
             "load": true,
             "name": "Organization Bundle 2",
             "description": "Synthea-generated Organization records",
             "type": "Organization Bundle",
             "priority": 1
-            
         },
         {
-            "file": "data/example/practitionerInformation1671557337568.json",
+            "file": "data/example/fhir/practitionerInformation1671557337568.json",
             "load": true,
             "name": "Practioner Bundle 1",
             "description": "Synthea-generated Practitioner records",
@@ -37,7 +36,7 @@
             "priority": 2
         },
         {
-            "file": "data/example/practitionerInformation1671557444542.json",
+            "file": "data/example/fhir/practitionerInformation1671557444542.json",
             "load": true,
             "name": "Practioner Bundle2 ",
             "description": "Synthea-generated Practitioner records",
@@ -45,7 +44,7 @@
             "priority": 3
         },
         {
-            "file": "data/example/Patient 1 - Adrian Allen1.json",
+            "file": "data/example/fhir/Patient 1 - Adrian Allen1.json",
             "load": true,
             "name": "Patient 1 - Adrian Allen1",
             "description": "Deidentified patient record from SHARES study.",
@@ -53,7 +52,7 @@
             "priority": 4
         },
         {
-            "file": "data/example/Patient 2 - Beth Brooks2.json",
+            "file": "data/example/fhir/Patient 2 - Beth Brooks2.json",
             "load": true,
             "name": "Patient 2 - Beth Brooks2",
             "description": "Deidentified patient record from SHARES study.",
@@ -61,7 +60,7 @@
             "priority": 5
         },
         {
-            "file": "data/example/Patient 3 - Carmen Chavez.json",
+            "file": "data/example/fhir/Patient 3 - Carmen Chavez.json",
             "load": true,
             "name": "Patient 3 - Carmen Chavez",
             "description": "Deidentified patient record from SHARES study.",
@@ -69,12 +68,21 @@
             "priority": 6
         },
         {
-            "file": "data/example/Patient 4 - Diana Dixon4.json",
+            "file": "data/example/fhir/Patient 4 - Diana Dixon4.json",
             "load": true,
             "name": "Patient 4 - Diana Dixon4",
             "description": "Deidentified patient record from SHARES study.",
             "type": "Patient Bundle",
             "priority": 7
+        },
+        {
+            "file": "data/example/cql/HelloWorld.cql",
+            "load": true,
+            "loader": "cql-as-fhir-library",
+            "name": "HelloWorld CQL Library",
+            "description": "CQL library for testing purposes.",
+            "type": "CQL Library",
+            "priority": 8
         }
     ]
 }

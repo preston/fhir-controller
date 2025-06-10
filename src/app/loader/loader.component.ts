@@ -18,6 +18,7 @@ import { HapiFhirDriver } from '../driver/hapi_driver';
 import { WildFhirDriver } from '../driver/wildfhir_driver';
 import { DriverType } from '../driver/driver_type';
 import { FhirCandleDriver } from '../driver/fhir_candle_driver';
+import { LoaderType } from './loader_type';
 
 @Component({
   selector: 'loader',
@@ -128,6 +129,10 @@ export class LoaderComponent implements OnInit {
 
   }
 
+  loaderTypes() {
+    return LoaderType;
+  }
+
 
   loadStackConfiguration(data: StackConfiguration) {
     this.stack_configuration = data;
@@ -165,25 +170,66 @@ export class LoaderComponent implements OnInit {
         let base_url = this.configuration_file.substring(0, this.configuration_file.lastIndexOf('/'));
         next.file = base_url + '/' + next.file;
       }
-      this.http.get(next.file).subscribe({
+
+      // Download it into browser memory.
+      this.http.get(next.file, {responseType: 'text'}).subscribe({
         next: data => {
           // console.log('Downloaded file: ' + next.file);
           // console.log(data);
-          this.http.post(this.stack_configuration.fhir_base_url, data, { headers: headers }).subscribe({
-            next: data => {
-              this.toastrService.success(next.file, 'Loaded ' + next.name);
-              this.messages.unshift({ type: 'success', body: 'Loaded ' + next.file, date: new Date() });
-              console.log('Loaded: ' + next.file);
-              this.loadNextFile(files);
-              // console.log(data);
-            }, error: error => {
-              this.toastrService.error(next.file, 'Error Loading');
-              this.messages.unshift({ type: 'danger', body: 'Could not load ' + next.file, date: new Date() });
-              console.error('Error loading file: ' + next.file);
-              console.error(error);
-              this.state = 'loaded';
-            }
-          });
+          console.log('Loading file : ' + next.file + ' with loader type: ' + next.loader);
+          switch (next.loader) {
+            case LoaderType.CQL_AS_FHIR_LIBRARY:
+              let info = this.extractCqlLibraryNameAndVersion(data as string);
+              if (info) {
+                // let libraryName = info.libraryName;
+                // let version = info.version;
+                let description = next.description || 'CQL Library loaded from file: ' + next.file;
+                let base64Content = btoa(data as string);
+                let bundle = this.buildFHIRBundle(info.libraryName, info.version, description, base64Content, this.stack_configuration.fhir_base_url);
+                this.http.post(this.stack_configuration.fhir_base_url, bundle, { headers: headers }).subscribe({
+                  next: data => {
+                    this.toastrService.success(next.file, 'Loaded ' + next.name);
+                    this.messages.unshift({ type: 'success', body: 'Loaded ' + next.file, date: new Date() });
+                    console.log('Loaded: ' + next.file);
+                    this.loadNextFile(files);
+                  }, error: error => {
+                    this.toastrService.error(next.file, 'Error Loading CQL Library');
+                    this.messages.unshift({ type: 'danger', body: 'Could not load ' + next.file, date: new Date() });
+                    console.error('Error loading file: ' + next.file);
+                    console.error(error);
+                    this.state = 'loaded';
+                  }
+                });
+              } else {
+                this.toastrService.error(next.file, 'Could not extract CQL library name and version');
+                this.messages.unshift({ type: 'danger', body: 'Could not extract CQL library name and version from file: ' + next.file, date: new Date() });
+                console.error('Could not extract CQL library name and version from file: ' + next.file);
+                this.state = 'loaded';
+              }
+              // this.buildFHIRBundle()
+              break;
+            case LoaderType.FHIR_BUNDLE:
+            // This is also the default loader type, so flow through.
+            default:
+              this.http.post(this.stack_configuration.fhir_base_url, data, { headers: headers }).subscribe({
+                next: data => {
+                  this.toastrService.success(next.file, 'Loaded ' + next.name);
+                  this.messages.unshift({ type: 'success', body: 'Loaded ' + next.file, date: new Date() });
+                  console.log('Loaded: ' + next.file);
+                  this.loadNextFile(files);
+                  // console.log(data);
+                }, error: error => {
+                  this.toastrService.error(next.file, 'Error Loading FHIR Bundle');
+                  this.messages.unshift({ type: 'danger', body: 'Could not load ' + next.file, date: new Date() });
+                  console.error('Error loading file: ' + next.file);
+                  console.error(error);
+                  this.state = 'loaded';
+                }
+              });
+              break;
+          }
+
+
         }, error: error => {
           this.toastrService.error(next.file, 'File Not Downloaded');
           this.messages.unshift({ type: 'danger', body: 'Could not download ' + next.file, date: new Date() });
@@ -224,6 +270,60 @@ export class LoaderComponent implements OnInit {
   test() {
     this.toastrService.success('Yay.', 'Test Message');
     this.messages.unshift({ type: 'info', body: 'It works.', date: new Date() });
+  }
+
+  extractCqlLibraryNameAndVersion(content: string) {
+    const libraryRegex = /^library\s+(\w+)\s+version\s+'([^']+)'/m;
+    const match = content.match(libraryRegex);
+    if (match) {
+      const libraryName = match[1];
+      const version = match[2];
+      return { libraryName, version };
+    } else {
+      return null;
+    }
+  }
+
+  buildFHIRBundle(
+    libraryName: string,
+    version: string,
+    description: any,
+    base64Content: string,
+    baseUrl: string
+  ) {
+    const libraryResource = {
+      resourceType: 'Library',
+      id: libraryName,
+      url: `${baseUrl}Library/${libraryName}`,
+      version: version,
+      name: libraryName,
+      title: libraryName,
+      status: 'active',
+      description: description,
+      content: [
+        {
+          contentType: 'text/cql',
+          data: base64Content,
+        },
+      ],
+    };
+
+    const bundle = {
+      resourceType: 'Bundle',
+      type: 'transaction',
+      entry: [
+        {
+          fullUrl: `urn: uuid: ${libraryName}`,
+          resource: libraryResource,
+          request: {
+            method: 'POST',
+            url: `Library/${libraryName}`,
+          },
+        },
+      ],
+    };
+
+    return bundle;
   }
 
 }

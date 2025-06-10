@@ -84,6 +84,15 @@
                     "description": "Whether or not to load the file by default.",
                     "type": "boolean"
                 },
+                "loader": {
+                    "description": "Load function to use for this file. Default: fhir.",
+                    "type": "string",
+                    "enum": [
+                        "fhir-bundle",
+                        "cql-as-fhir-library"
+                    ],
+                    "default": "fhir-bundle"
+                },
                 "name": {
                     "description": "Human-readable name for the file. May be the same as the file name.",
                     "type": "string"
