@@ -36,41 +36,62 @@
                 <span class="badge bg-warning">No data files have been configured to load. Please update the controller
                     configuration file if you'd like to load FHIR bundles.</span>
             </div>
-            <div *ngIf="files_to_load.length > 0" class="list-group">
+            <div *ngIf="files_to_load.length > 0" class="">
                 <h4 class="mt-4">Files
-                    <button role="button" class="btn btn-sm btn-outline-secondary" (click)="toggleSelected()"> <span
-                            class="bi bi-check-square"></span> Toggle Selections</button>
                 </h4>
-                <div class="mt-1 me-2">
-                    <button class="me-2 btn btn-md btn-success" role="button" (click)="load()"
-                        [disabled]="state == 'loading'"><span class="bi bi-save"> Load Selected File Sequence</span></button>
-                    <button *ngIf="development" class="btn btn-lg btn-secondary" role="button" (click)="test()"><span
+                <button role="button" class="btn btn-md btn-outline-secondary" (click)="toggleSelected()"> <span
+                        class="bi bi-check-square"></span> Toggle Selections</button>
+                <div class="float-end">
+                    <button class="btn btn-md btn-success" role="button" (click)="load()"
+                        [disabled]="state == 'loading'"><span class="bi bi-save"> Load Selected File
+                            Sequence</span></button>
+                    <button *ngIf="development" class="btn btn-md btn-secondary" role="button" (click)="test()"><span
                             class="bi bi-chat"></span>
                         Test</button>
 
                 </div>
 
-                <div class="my-2">
+                <div class="my-2 list-group">
                     <!-- <span class="fw-lighter">The following data files will be loading in the following sequence. </span> -->
                     <span *ngFor="let f of files_to_load" class="list-group-item">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">
                                 <div class="form-check form-switch form-check-secondary">
-                                    <span *ngIf="f.loader === loaderTypes().CQL_AS_FHIR_LIBRARY" class="bi bi-code"></span>
-                                    <span *ngIf="f.loader === loaderTypes().FHIR_BUNDLE || !f.loader" class="bi bi-fire"></span>
+                                    <span *ngIf="f.loader === loaderTypes().CQL_AS_FHIR_LIBRARY"
+                                        class="bi bi-code"></span>
+                                    <span *ngIf="f.loader === loaderTypes().FHIR_BUNDLE || !f.loader"
+                                        class="bi bi-fire"></span>
                                     <input class="form-check-input me-1" role="checkbox" [(ngModel)]="f.load"
-                                    type="checkbox" />
+                                        type="checkbox" />
                                     &nbsp;<a role="button" [href]="f.file" target="_blank">{{f.name}}</a>
                                 </div>
                             </h5>
-                            
+
                             <small>{{f.type}}
                                 <br>
                                 <i>Priority: {{f.priority}}</i>
+
                             </small>
                         </div>
                         <p class="mb-1">{{f.description}}</p>
                         <small>{{f.file}}</small>
+                        @if(f.evaluate?.id != null)
+                        { <br>
+                        <div class="input-group">
+                            @if(f.loader === loaderTypes().CQL_AS_FHIR_LIBRARY) {
+                            <div class="input-group-text"><span class="bi bi-people"></span>&nbsp;Subject</div>
+                            <select name="subject" id="evaluateSubject" [(ngModel)]="evaluateSubject">
+                                <option *ngFor="let s of f.evaluate?.subjects">{{s.name}}
+                                </option>
+                            </select>
+                            @if(this.evaluateSubject) {
+                                <button class="btn btn-md btn-success" (click)="evaluateCql(f)"><span
+                                        class="bi bi-braces"></span> Evaluate</button>
+                                }
+                            } @else if (f.loader === loaderTypes().FHIR_BUNDLE) {
+                            }
+                        </div>
+                        }
                         <!-- <span class="badge text-bg-primary rounded-pill">14</span> -->
                     </span>
                 </div>

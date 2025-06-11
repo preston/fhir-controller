@@ -26,5 +26,5 @@ RUN rm -rf *
 COPY --from=builder /app/dist/stack/browser .
 
 # CMD ["./configure-from-environment.sh", "&&", "exec", "nginx", "-g", "'daemon off;'"]
-# CMD ["envsubst", "<", "configuration.template.js", ">", "configuration.js", "&&", "exec", "nginx", "-g", "'daemon off;'"]
-CMD envsubst < configuration.template.js > configuration.js  && exec nginx -g 'daemon off;'
+COPY entrypoint.sh .
+CMD ["./entrypoint.sh"]

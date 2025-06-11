@@ -70,10 +70,27 @@
             "required": [
                 "file",
                 "load",
+                "loader",
                 "name",
                 "description",
                 "type",
                 "priority"
+            ],
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "loader": {
+                                "const": "cql-as-fhir-library"
+                            }
+                        }
+                    },
+                    "then": {
+                        "required": [
+                            "evaluate"
+                        ]
+                    }
+                }
             ],
             "properties": {
                 "file": {
@@ -85,7 +102,7 @@
                     "type": "boolean"
                 },
                 "loader": {
-                    "description": "Load function to use for this file. Default: fhir.",
+                    "description": "Load function to use for this file. Default: 'fhir-bundle'.",
                     "type": "string",
                     "enum": [
                         "fhir-bundle",
@@ -109,6 +126,44 @@
                     "description": "The order in which to load the data files. Lower numbers are loaded first.",
                     "type": "integer",
                     "default": 1
+                },
+                "evaluate": {
+                    "$ref": "#/$defs/evaluate",
+                    "description": "Optional evaluation parameters for CQL libraries. Only used if the loader is 'cql-as-fhir-library'."
+                }
+            }
+        },
+        "evaluate": {
+            "type": "object",
+            "description": "Optional evaluation parameters for CQL libraries.",
+            "required": [
+                "id",
+                "subjects"
+            ],
+            "properties": {
+                "id": {
+                    "description": "The ID of the CQL library to evaluate.",
+                    "type": "string"
+                },
+                "subjects": {
+                    "description": "The subjects to evaluate the CQL library against.",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "description": "A subject to evaluate the CQL library against.",
+                        "required": [
+                            "id",
+                            "name"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 }
             }
         }

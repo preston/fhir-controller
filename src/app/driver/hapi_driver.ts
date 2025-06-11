@@ -10,6 +10,14 @@ export class HapiFhirDriver extends GenericDriver {
         return true;
     }
 
+    override supports_cql_libraries(): boolean {
+        return true;
+    }
+
+    override supports_cql_evaluate(): boolean {
+        return true;
+    }
+    
     override reset() {
         let data = {
             "resourceType": "Parameters",

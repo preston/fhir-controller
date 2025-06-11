@@ -16,6 +16,15 @@ export class GenericDriver {
         return false;
     }
 
+    supports_cql_libraries(): boolean {
+        return false;
+    }
+
+    supports_cql_evaluate(): boolean {
+        return false;
+    }
+
+
     reset(): Observable<any> {
         throw new Error('Reset not implemented by this driver.');
     }
