@@ -1,1 +1,7 @@
-<router-outlet />
+<div id="app-wrapper" [attr.data-bs-theme]="settingsService.theme_effective">
+
+    <app-navigation></app-navigation>
+    <div class="main-content">
+        <router-outlet />
+    </div>
+</div>

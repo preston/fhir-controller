@@ -1,14 +1,36 @@
-body {
-  background: url(/images/textures/binding_dark.png) repeat center center fixed;
-  // .form-check-popover {
-  //   --bs-popover-header-bg: #e5a09d;
-  //   --bs-popover-header-color: #290806;
-  //   --bs-popover-bg: #e5a09d;
-  //   --bs-popover-body-color: #290806;
-  //   --bs-popover-max-width: 100%;
-  //   font-weight: bolder;
-  //   .popover-header {
-  //     border-bottom: 0;
-  //   }
-  // }
+// body {
+//   background: url(/images/textures/binding_dark.png) repeat center center fixed;
+
+// }
+
+body:has([data-bs-theme=light]) {
+  background: url("/images/textures/crossword.png") repeat;
+
+}
+
+body:has([data-bs-theme=dark]) {
+  background: url("/images/textures/binding_dark.png") repeat;
+
+  .h1,
+  .h2,
+  .h3,
+  .h4,
+  .h5,
+  .h6,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  label,
+  p,
+  li,
+  b,
+  span,
+  // a,
+  .lead {
+    // Simplex override for the default font color that's way too dark.
+    color: #aaa;
+  }
 }

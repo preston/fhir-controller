@@ -12,13 +12,20 @@ import { MarkdownModule } from 'ngx-markdown';
 import { provideToastr } from 'ngx-toastr';
 
 import { routes } from './app.routes';
+import { SettingsService } from './settings/settings.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    importProvidersFrom(BrowserModule, FormsModule, MomentModule, MarkdownModule.forRoot()),
+    importProvidersFrom(
+      BrowserModule,
+      FormsModule,
+      MomentModule,
+      MarkdownModule.forRoot()),
     provideAnimations(), // required animations providers
     provideToastr(), // Toastr providers
     provideHttpClient(withInterceptorsFromDi()),
     provideZoneChangeDetection({ eventCoalescing: true }),
-     provideRouter(routes)]
+    provideRouter(routes),
+    SettingsService
+  ]
 };
