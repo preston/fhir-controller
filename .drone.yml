@@ -8,7 +8,7 @@ steps:
   - name: publish
     image: plugins/docker
     settings:
-      repo: p3000/skycapp-fhir-stack-controller
+      repo: p3000/fhir-controller
       tags:
         - ${DRONE_COMMIT_BRANCH}-linux-amd64
       username:
@@ -26,7 +26,7 @@ steps:
   - name: publish
     image: plugins/docker
     settings:
-      repo: p3000/skycapp-fhir-stack-controller
+      repo: p3000/fhir-controller
       tags:
         - ${DRONE_COMMIT_BRANCH}-linux-arm64
       username:
@@ -48,8 +48,8 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
-      target: p3000/skycapp-fhir-stack-controller:latest
-      template: p3000/skycapp-fhir-stack-controller:master-OS-ARCH
+      target: p3000/fhir-controller:latest
+      template: p3000/fhir-controller:master-OS-ARCH
       platforms:
         - linux/amd64
         - linux/arm64
