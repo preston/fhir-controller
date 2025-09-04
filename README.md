@@ -1,4 +1,4 @@
-# Skycapp FHIR Stack Controller
+# FHIR Controller :: Application Stack Data Loader and Utility UI
 
 This base image, intended to be directly extended with your own data files, provides a simple web UI for bootstrapping a freshly booted FHIR server by:
 
@@ -20,9 +20,9 @@ When the stack controller loads, must be provided a configuration file either by
 
 See https://github.com/asushares/stack for a working example of how to create a Dockerfile using this base image. The general steps are:
 
-1. Copy your files into the image, e.g. `COPY /whatever .`. The contents copied into the image will be downloadable from the root `/` path.
-1. Create and copy in a `stack.json` file defining the controller name, data file load order, and other metadata to load by default.
-1. Build it! Once running, it can be used as an entrypoint UI for building a tutorial of using your application stack with built-in FHIR data bundle loading and FHIR server resets. Note: "Expunging" data requires a supported non-standard operation of the underlying FHIR server.
+1. Copy your data files into the image, e.g. `COPY /whatever .`. All files copied into the image will be downloadable from the root `/` path.
+2. Include a copy of a `stack.json` file defining the controller name, data file load order, and other metadata to load by default.
+3. Build it! Once running, it can be used as an entrypoint UI for building a tutorial of using your application stack with built-in FHIR data bundle loading and FHIR server resets. Note: "Expunging" data requires a supported non-standard operation of the underlying FHIR server.
 
 See [stack.schema.json](src/assets/stack.schema.json) for the JSON schema.
 
