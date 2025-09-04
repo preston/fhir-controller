@@ -88,7 +88,7 @@
             "load": true,
             "loader": "cql-as-fhir-library",
             "name": "HelloWorld CQL Library",
-            "description": "CQL library for testing purposes.",
+            "description": "CQL example 'Hello World' library for testing purposes.",
             "type": "CQL Library",
             "priority": 8,
             "evaluate": {

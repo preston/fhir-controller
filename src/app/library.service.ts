@@ -15,9 +15,10 @@ import { LoaderService } from './loader/loader.service';
 export class LibraryService extends BaseService {
 
 	public static readonly LIBRARY_PATH = '/Library';
-	public static readonly DEFAULT_LIBRARY_ID = 'WeightManagemet';
+	// public static readonly DEFAULT_LIBRARY_ID = 'WeightManagemet';
 
-	public libraryId: string = LibraryService.DEFAULT_LIBRARY_ID;
+	// public libraryId: string = LibraryService.DEFAULT_LIBRARY_ID;
+	public libraryId: string = '';
 
 	constructor(protected loaderService: LoaderService,  protected override http: HttpClient) { 
 	  super(http);
@@ -34,7 +35,7 @@ export class LibraryService extends BaseService {
 
 
 	search(searchTerm: string): Observable<Bundle<Library>> {
-		return this.http.get<Bundle<Library>>(this.url() + "?title=" + searchTerm, { headers: this.headers() });
+		return this.http.get<Bundle<Library>>(this.url() + "?description:contains=" + searchTerm, { headers: this.headers() });
 	}
 
 	urlFor(id: string) {

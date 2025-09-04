@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Highlight } from 'ngx-highlightjs';
+import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 
 @Component({
 	selector: 'logic-component',
@@ -19,8 +20,8 @@ export class LibraryComponent implements OnChanges {
 
 	public library: Library | null = null;
 
-	protected exampleCqlFileUrl = '/cql/WeightManagement.cql';
 	protected cql: string | null = null;
+	public static DEFAULT_LIBRARY_NAME: string = '';
 	public static DEFAULT_LIBRARY_VERSION = "0.0.0";
 	public libraryVersion: string = LibraryComponent.DEFAULT_LIBRARY_VERSION;
 	public libraryDescription: string = "";
@@ -30,14 +31,48 @@ export class LibraryComponent implements OnChanges {
 	public searchResults: Library[] = [];
 	public isSearching: boolean = false;
 	public showSearchResults: boolean = false;
+	private searchSubject = new Subject<string>();
 
 	constructor(
 		protected libraryService: LibraryService,
 		protected toastrService: ToastrService) {
-		this.libraryService.libraryId = (window as any)["WMM_LIBRARY_ID"] || LibraryService.DEFAULT_LIBRARY_ID;
-		console.log('LibraryComponent initialized with libraryId:', this.libraryService.libraryId);
-		this.reloadLibraryFromServer();
+		// this.libraryService.libraryId = LibraryService.DEFAULT_LIBRARY_ID;
+		console.log('LibraryComponent initialized');
+		// this.reloadLibraryFromServer();
 		// this.reloadExampleCql();
+
+		// Set up live search with debouncing
+		this.searchSubject.pipe(
+			debounceTime(100), // Wait 300ms after user stops typing
+			distinctUntilChanged(), // Only emit if the value has changed
+			switchMap(searchTerm => {
+				if (searchTerm.trim()) {
+					this.isSearching = true;
+					return this.libraryService.search(searchTerm);
+				} else {
+					this.isSearching = false;
+					this.showSearchResults = false;
+					this.searchResults = [];
+					return [];
+				}
+			})
+		).subscribe({
+			next: (bundle: Bundle<Library>) => {
+				this.isSearching = false;
+				if (bundle.entry && bundle.entry.length > 0) {
+					this.searchResults = bundle.entry.map(entry => entry.resource!);
+					this.showSearchResults = true;
+				} else if (this.searchTerm.trim()) {
+					this.searchResults = [];
+					this.showSearchResults = true;
+				}
+			},
+			error: (error: any) => {
+				this.isSearching = false;
+				console.error('Error searching libraries:', error);
+				this.toastrService.error('Failed to search libraries. Please check your connection.', 'Search Error');
+			}
+		});
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
@@ -56,7 +91,7 @@ export class LibraryComponent implements OnChanges {
 		if (this.library?.name) {
 			this.libraryService.libraryId = this.library.name;
 		} else {
-			this.libraryService.libraryId = LibraryService.DEFAULT_LIBRARY_ID;
+			this.libraryService.libraryId = LibraryComponent.DEFAULT_LIBRARY_NAME;
 		}
 		if (this.library?.version) {
 			this.libraryVersion = this.library.version;
@@ -98,27 +133,27 @@ export class LibraryComponent implements OnChanges {
 		});
 	}
 
-	reloadExampleCql() {
-		this.libraryService.getExampleCql(this.exampleCqlFileUrl).subscribe({
-			next: (cql: string) => {
-				this.cql = cql;
-				let v = this.extractVersionFromCql(cql);
-				if (v) {
-					this.libraryVersion = v;
-					console.log('Extracted version from CQL:', this.libraryVersion);
-					this.toastrService.success(`CQL loaded to editor has not been saved to the server.`, 'Example Loaded into Editor');
-				} else {
-					this.libraryVersion = LibraryComponent.DEFAULT_LIBRARY_VERSION;
-					console.warn('No version found in CQL, using default version:', LibraryComponent.DEFAULT_LIBRARY_VERSION);
-					this.toastrService.warning(`Using default version "${LibraryComponent.DEFAULT_LIBRARY_VERSION}". CQL has not been saved to the server.`, 'Example Loaded into Editor');
-				}
-			}, error: (error: any) => {
-				console.error('Error loading example CQL:', error);
-				this.toastrService.error(`The server didn't respond with example CQL for "${this.exampleCqlFileUrl}". Please check the URL.`, 'Example CQL Not Loaded');
-				this.cql = null;
-			}
-		});
-	}
+	// reloadExampleCql() {
+	// 	this.libraryService.getExampleCql(this.exampleCqlFileUrl).subscribe({
+	// 		next: (cql: string) => {
+	// 			this.cql = cql;
+	// 			let v = this.extractVersionFromCql(cql);
+	// 			if (v) {
+	// 				this.libraryVersion = v;
+	// 				console.log('Extracted version from CQL:', this.libraryVersion);
+	// 				this.toastrService.success(`CQL loaded to editor has not been saved to the server.`, 'Example Loaded into Editor');
+	// 			} else {
+	// 				this.libraryVersion = LibraryComponent.DEFAULT_LIBRARY_VERSION;
+	// 				console.warn('No version found in CQL, using default version:', LibraryComponent.DEFAULT_LIBRARY_VERSION);
+	// 				this.toastrService.warning(`Using default version "${LibraryComponent.DEFAULT_LIBRARY_VERSION}". CQL has not been saved to the server.`, 'Example Loaded into Editor');
+	// 			}
+	// 		}, error: (error: any) => {
+	// 			console.error('Error loading example CQL:', error);
+	// 			this.toastrService.error(`The server didn't respond with example CQL for "${this.exampleCqlFileUrl}". Please check the URL.`, 'Example CQL Not Loaded');
+	// 			this.cql = null;
+	// 		}
+	// 	});
+	// }
 
 	extractVersionFromCql(cql: string): string | null {
 		// const versionRegex = /^library.+version\s+\'(.*)\'$/
@@ -193,32 +228,10 @@ export class LibraryComponent implements OnChanges {
 	}
 
 	// Search functionality methods
-	searchLibraries() {
-		if (!this.searchTerm.trim()) {
-			this.toastrService.warning('Please enter a search term', 'Search Required');
-			return;
-		}
-
-		this.isSearching = true;
-		this.libraryService.search(this.searchTerm).subscribe({
-			next: (bundle: Bundle<Library>) => {
-				this.isSearching = false;
-				if (bundle.entry && bundle.entry.length > 0) {
-					this.searchResults = bundle.entry.map(entry => entry.resource!);
-					this.showSearchResults = true;
-					this.toastrService.success(`Found ${this.searchResults.length} library(ies)`, 'Search Results');
-				} else {
-					this.searchResults = [];
-					this.showSearchResults = true;
-					this.toastrService.info('No libraries found matching your search', 'No Results');
-				}
-			},
-			error: (error: any) => {
-				this.isSearching = false;
-				console.error('Error searching libraries:', error);
-				this.toastrService.error('Failed to search libraries. Please check your connection.', 'Search Error');
-			}
-		});
+	onSearchInput(event: any) {
+		const searchTerm = event.target.value;
+		this.searchTerm = searchTerm;
+		this.searchSubject.next(searchTerm);
 	}
 
 	selectLibrary(library: Library) {
@@ -236,6 +249,8 @@ export class LibraryComponent implements OnChanges {
 		this.searchTerm = "";
 		this.searchResults = [];
 		this.showSearchResults = false;
+		this.isSearching = false;
+		this.searchSubject.next(""); // Clear any pending searches
 	}
 
 }
