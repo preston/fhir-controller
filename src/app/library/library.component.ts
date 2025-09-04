@@ -86,7 +86,26 @@ export class LibraryComponent implements OnChanges {
 	libraryAsString(): string {
 		let s = '';
 		if (this.library) {
-			s = JSON.stringify(this.library, null, 2);
+			// Create a copy of the library object with current form values
+			const libraryCopy = { ...this.library };
+			libraryCopy.id = this.libraryService.libraryId || '';
+			libraryCopy.name = this.libraryService.libraryId || '';
+			libraryCopy.title = this.libraryService.libraryId || '';
+			libraryCopy.version = this.libraryVersion || '';
+			libraryCopy.description = this.libraryDescription || '';
+			libraryCopy.url = this.libraryService.urlFor(this.libraryService.libraryId || '');
+			
+			// Update content if CQL is present
+			if (this.cql && this.cql.trim()) {
+				libraryCopy.content = [{
+					contentType: 'text/cql',
+					data: btoa(this.cql)
+				}];
+			} else {
+				libraryCopy.content = [];
+			}
+			
+			s = JSON.stringify(libraryCopy, null, 2);
 		}
 		return s;
 	}
@@ -252,6 +271,9 @@ export class LibraryComponent implements OnChanges {
 			this.isNewLibrary = false;
 			this.hasSelectedLibrary = true;
 			
+			// Set the library object immediately for the FHIR Resource tab
+			this.library = library;
+			
 			this.reloadLibraryFromServer();
 			this.toastrService.success(`Selected library: ${library.name || library.id}`, 'Library Selected');
 		}
@@ -267,11 +289,24 @@ export class LibraryComponent implements OnChanges {
 
 	createNewLibrary() {
 		// Reset to defaults for a new library
-		this.library = null;
 		this.libraryService.libraryId = "";
 		this.libraryVersion = LibraryComponent.DEFAULT_LIBRARY_VERSION;
 		this.libraryDescription = "";
 		this.cql = "";
+		
+		// Create a basic Library object for the FHIR Resource tab
+		this.library = {
+			resourceType: 'Library',
+			type: {},
+			id: '',
+			version: this.libraryVersion,
+			name: '',
+			title: '',
+			status: 'draft',
+			description: this.libraryDescription,
+			url: '',
+			content: []
+		};
 		
 		// Set state for new library
 		this.isNewLibrary = true;

@@ -36,7 +36,8 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/simplex.css",
               "src/styles.scss",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/highlight.js/styles/github.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
