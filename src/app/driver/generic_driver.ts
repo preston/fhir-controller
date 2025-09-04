@@ -3,10 +3,12 @@
 import { HttpClient } from "@angular/common/http";
 import { StackConfiguration } from "../loader/stack_configuration";
 import { Observable } from "rxjs";
+import { DriverType } from "./driver_type";
 
 export class GenericDriver {
 
     public name: string = 'Generic';
+    public code: string = DriverType.Generic;
 
     constructor(public stack_configuration: StackConfiguration, public http: HttpClient) {
 

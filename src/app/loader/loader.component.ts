@@ -123,6 +123,27 @@ export class LoaderComponent implements OnInit, OnDestroy {
 		// This method is kept for template compatibility
 	}
 
+	get selectedDriver(): string {
+		return this.loaderService.currentConfiguration?.driver || DriverType.Generic;
+	}
+
+	set selectedDriver(value: string) {
+		if (this.loaderService.currentConfiguration) {
+			this.loaderService.currentConfiguration.driver = value as DriverType;
+			this.loaderService.changeDriver();
+		}
+	}
+
+	get fhirBaseUrl(): string {
+		return this.loaderService.currentConfiguration?.fhir_base_url || '';
+	}
+
+	set fhirBaseUrl(value: string) {
+		if (this.loaderService.currentConfiguration) {
+			this.loaderService.currentConfiguration.fhir_base_url = value;
+		}
+	}
+
 	driverTypes() {
 		return DriverType;
 	}

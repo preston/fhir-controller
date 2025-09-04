@@ -20,7 +20,7 @@ import { FhirCandleDriver } from '../driver/fhir_candle_driver';
   providedIn: 'root'
 })
 export class LoaderService {
-  private configurationSubject = new BehaviorSubject<StackConfiguration | null>(null);
+  public configurationSubject = new BehaviorSubject<StackConfiguration | null>(null);
   private filesSubject = new BehaviorSubject<DataFile[]>([]);
   private messagesSubject = new BehaviorSubject<LoaderMessage[]>([]);
   private stateSubject = new BehaviorSubject<'default' | 'loading' | 'loaded'>('default');
@@ -32,7 +32,7 @@ export class LoaderService {
   public state$ = this.stateSubject.asObservable();
   public errors$ = this.errorsSubject.asObservable();
 
-  private driver: GenericDriver | HapiFhirDriver | WildFhirDriver | FhirCandleDriver | null = null;
+  public driver: GenericDriver | HapiFhirDriver | WildFhirDriver | FhirCandleDriver | null = null;
   private configuration_file = 'stack.json';
 
   constructor(
@@ -60,9 +60,6 @@ export class LoaderService {
     return this.errorsSubject.value;
   }
 
-  get currentDriver(): GenericDriver | HapiFhirDriver | WildFhirDriver | FhirCandleDriver | null {
-    return this.driver;
-  }
 
   loadStackConfiguration(configurationFile?: string): Observable<StackConfiguration> {
     const file = configurationFile || this.configuration_file;
@@ -92,7 +89,7 @@ export class LoaderService {
     this.changeDriver();
   }
 
-  private changeDriver(): void {
+  public changeDriver(): void {
     const config = this.currentConfiguration;
     if (!config) {
       this.driver = null;

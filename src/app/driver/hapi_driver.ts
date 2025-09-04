@@ -1,10 +1,12 @@
 // Author: Preston Lee
 
+import { DriverType } from "./driver_type";
 import { GenericDriver } from "./generic_driver";
 
 export class HapiFhirDriver extends GenericDriver {
 
     public override name: string = 'HAPI';
+    public override code: string = DriverType.Hapi;
 
     override supports_reset(): boolean {
         return true;

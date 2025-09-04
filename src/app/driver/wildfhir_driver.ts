@@ -1,10 +1,12 @@
 // Author: Preston Lee
 
+import { DriverType } from "./driver_type";
 import { GenericDriver } from "./generic_driver";
 
 export class WildFhirDriver extends GenericDriver {
 
     public override name: string = 'WildFHIR';
+    public override code: string = DriverType.WildFHIR;
 
     override supports_reset(): boolean {
         return true;
