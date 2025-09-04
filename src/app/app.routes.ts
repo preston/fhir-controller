@@ -8,5 +8,5 @@ import { LibraryComponent } from './library/library.component';
 export const routes: Routes = [
     { path: '', component: LoaderComponent },
     { path: 'settings', component: SettingsComponent },
-    { path: 'library', component: LibraryComponent }
+    { path: 'libraries', component: LibraryComponent }
 ];
