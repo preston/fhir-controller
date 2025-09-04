@@ -33,6 +33,10 @@ export class LibraryComponent implements OnChanges {
 	public showSearchResults: boolean = false;
 	private searchSubject = new Subject<string>();
 
+	// Library state tracking
+	public isNewLibrary: boolean = false;
+	public hasSelectedLibrary: boolean = false;
+
 	constructor(
 		protected libraryService: LibraryService,
 		protected toastrService: ToastrService) {
@@ -178,6 +182,7 @@ export class LibraryComponent implements OnChanges {
 					console.log('Library saved successfully:', response);
 					this.toastrService.success(`Library "${this.libraryService.libraryId}" saved successfully!`, 'Library Saved to Server');
 					this.library = response; // Update the local library reference
+					this.isNewLibrary = false; // After saving, it's no longer a new library
 					// this.reloadLibrary();
 				}, error: (error: any) => {
 					console.error('Error saving library:', error);
@@ -194,6 +199,8 @@ export class LibraryComponent implements OnChanges {
 					console.log('Library deleted successfully:', response);
 					this.toastrService.success(`Library "${this.libraryService.libraryId}" deleted successfully!`, 'Library Deleted');
 					this.library = null; // Clear the local library reference
+					this.hasSelectedLibrary = false; // Reset selection state
+					this.isNewLibrary = false; // Reset new library state
 					this.decodeLibaryData(); // Reset the decoded data to defaults
 				}, error: (error: any) => {
 					console.error('Error deleting library:', error);
@@ -240,6 +247,11 @@ export class LibraryComponent implements OnChanges {
 			this.showSearchResults = false;
 			this.searchTerm = "";
 			this.searchResults = [];
+			
+			// Set state for existing library
+			this.isNewLibrary = false;
+			this.hasSelectedLibrary = true;
+			
 			this.reloadLibraryFromServer();
 			this.toastrService.success(`Selected library: ${library.name || library.id}`, 'Library Selected');
 		}
@@ -251,6 +263,40 @@ export class LibraryComponent implements OnChanges {
 		this.showSearchResults = false;
 		this.isSearching = false;
 		this.searchSubject.next(""); // Clear any pending searches
+	}
+
+	createNewLibrary() {
+		// Reset to defaults for a new library
+		this.library = null;
+		this.libraryService.libraryId = "";
+		this.libraryVersion = LibraryComponent.DEFAULT_LIBRARY_VERSION;
+		this.libraryDescription = "";
+		this.cql = "";
+		
+		// Set state for new library
+		this.isNewLibrary = true;
+		this.hasSelectedLibrary = true;
+		
+		// Clear search state
+		this.clearSearch();
+		
+		this.toastrService.info("Creating new library. Fill in the details below.", "New Library");
+	}
+
+	clearSelection() {
+		// Reset all state
+		this.library = null;
+		this.libraryService.libraryId = "";
+		this.libraryVersion = LibraryComponent.DEFAULT_LIBRARY_VERSION;
+		this.libraryDescription = "";
+		this.cql = "";
+		this.isNewLibrary = false;
+		this.hasSelectedLibrary = false;
+		
+		// Clear search state
+		this.clearSearch();
+		
+		this.toastrService.info("Cleared selection. You can now search for existing libraries or create a new one.", "Selection Cleared");
 	}
 
 }
