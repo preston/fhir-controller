@@ -1,0 +1,31 @@
+// Author: Preston Lee
+
+// @import "../../stylesheets/common.scss";
+
+#settings {
+    padding-top: 20px;
+
+    h1 {
+        text-shadow: 0 10px 10px rgba(0, 0, 0, .2);
+    }
+
+    .workstream_name {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    th {
+        cursor: pointer;
+    }
+
+    td {
+        border: 0;
+    }
+
+    .form-check {
+        label {
+            cursor: pointer;
+        }
+    }
+
+}

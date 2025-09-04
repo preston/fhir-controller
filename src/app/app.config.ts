@@ -13,6 +13,7 @@ import { provideToastr } from 'ngx-toastr';
 
 import { routes } from './app.routes';
 import { SettingsService } from './settings/settings.service';
+import { LoaderService } from './loader/loader.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    SettingsService
+    SettingsService,
+    LoaderService
   ]
 };

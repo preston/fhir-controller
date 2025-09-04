@@ -1,6 +1,6 @@
 {
     "$schema": "stack.schema.json",
-    "title": "Example Stack Controller Configuration",
+    "title": "Example Configuration",
     "instructions": "Provide usage instructions here in markdown format.",
     "fhir_base_url": "http://localhost:8080/fhir",
     "driver": "hapi",

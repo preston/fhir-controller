@@ -1,29 +1,17 @@
 <!-- <span id='fire-icon' class="bi bi-fire">  </span> -->
 <div id="loader" class="container-fluid">
-    <div class="row p-4">
-        <div class="col-sm-12">
-            <h1>{{stack_configuration.title}}</h1>
-            <markdown [data]="stack_configuration.instructions"></markdown>
-        </div>
-    </div>
     <div class="row mt-4 p-4">
         <div class="col-sm-8">
-            <h4>Data Controls
-                <button class="me-2 btn btn-sm btn-outline-secondary" role="button" (click)="reloadStackConfiguration()"
-                    [disabled]="state == 'loading'"><span class="bi bi-arrow-clockwise"></span>
-                    Reload Form</button>
-            </h4>
-            <div class="input-group input-group-md">
-                <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
-                <input type="text" class="form-control" [(ngModel)]="stack_configuration.fhir_base_url" />
-            </div>
+            <h4>Instructions</h4>
+            <markdown [data]="loaderService.currentConfiguration?.instructions"></markdown>
+          
 
         </div>
         <div class="col-sm-4">
             <section>
                 <h4>Links</h4>
                 <ul class="list-group">
-                    <li *ngFor="let l of stack_configuration.links" class="list-group-item">
+                    <li *ngFor="let l of loaderService.currentConfiguration?.links" class="list-group-item">
                         <a [href]="l.url" target="_blank">{{l.name}}</a>
                     </li>
                 </ul>
@@ -32,6 +20,15 @@
     </div>
     <div class="row my-4 p-4">
         <div class="col-sm-8">
+            <h4>Data Controls
+                <button class="me-2 btn btn-sm btn-outline-secondary" role="button" (click)="reloadStackConfiguration()"
+                    [disabled]="state == 'loading'"><span class="bi bi-arrow-clockwise"></span>
+                    Reload Form</button>
+            </h4>
+            <div class="input-group input-group-md">
+                <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
+                <input type="text" class="form-control" [ngModel]="loaderService.currentConfiguration?.fhir_base_url" />
+            </div>
             <div *ngIf="files_to_load.length == 0">
                 <span class="badge bg-warning">No data files have been configured to load. Please update the controller
                     configuration file if you'd like to load FHIR bundles.</span>
@@ -100,27 +97,27 @@
         </div>
         <div class="col-sm-4">
 
-            <section class="mt-4">
+            <section class="">
                 <h4>Server Utilities</h4>
-                <div class="input-group input-group-sm">
+                <div class="input-group">
                     <span class="input-group-text"><i class="bi-fire"></i>&nbsp;Driver</span>
-                    <select class="form-control" [(ngModel)]="stack_configuration.driver"
+                    <select class="form-control" [(ngModel)]="loaderService.currentDriver"
                         (ngModelChange)="changeDriver()">
                         <option [value]="driverTypes().Generic"
-                            [selected]="stack_configuration.driver == driverTypes().Generic">Generic</option>
+                            [selected]="loaderService.currentConfiguration?.driver == driverTypes().Generic">Generic</option>
                         <option [value]="driverTypes().Hapi"
-                            [selected]="stack_configuration.driver == driverTypes().Hapi">HAPI FHIR</option>
+                            [selected]="loaderService.currentConfiguration?.driver == driverTypes().Hapi">HAPI FHIR</option>
                         <option [value]="driverTypes().WildFHIR"
-                            [selected]="stack_configuration.driver == driverTypes().WildFHIR">Aegis WildFHIR</option>
+                            [selected]="loaderService.currentConfiguration?.driver == driverTypes().WildFHIR">Aegis WildFHIR</option>
                         <option [value]="driverTypes().FHIRCandle"
-                            [selected]="stack_configuration.driver == driverTypes().FHIRCandle">FHIR Candle</option>
+                            [selected]="loaderService.currentConfiguration?.driver == driverTypes().FHIRCandle">FHIR Candle</option>
                     </select>
                 </div>
                 <span class="fw-lighter">Unimplemented or
-                    incompatible functions of <b>{{driver.name}}</b> will be disabled.</span>
+                    incompatible functions of <b>{{loaderService.currentDriver?.name}}</b> will be disabled.</span>
                 <br />
                 <button class="btn btn-md btn-warning" role="button" (click)="resetServerData()"
-                    [disabled]="driver.supports_reset() == false || state == 'loading'"><span class="bi bi-trash">
+                    [disabled]="loaderService.currentDriver?.supports_reset() == false || state == 'loading'"><span class="bi bi-trash">
                         Permanently Reset Server Data</span></button>
             </section>
 

@@ -1,0 +1,58 @@
+// Author: Preston Lee
+
+.navbar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .navbar-brand {
+    font-size: 1.25rem;
+    
+    i {
+      font-size: 1.5rem;
+      color: #0d6efd;
+    }
+  }
+  
+  .nav-link {
+    transition: color 0.15s ease-in-out;
+    
+    &:hover {
+      color: #0d6efd !important;
+    }
+    
+    &.active {
+      color: #0d6efd !important;
+      font-weight: 500;
+    }
+    
+    i {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .dropdown-menu {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    
+    .dropdown-item {
+      transition: background-color 0.15s ease-in-out;
+      
+      &:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+      }
+      
+      i {
+        width: 1rem;
+      }
+    }
+  }
+}
+
+// Ensure proper spacing for sticky navbar
+body {
+  padding-top: 0; // Remove any existing padding-top
+}
+
+// Add some top margin to the main content to account for sticky navbar
+.main-content {
+  margin-top: 1rem;
+}
