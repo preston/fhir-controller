@@ -14,6 +14,7 @@ import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { SettingsService } from './settings/settings.service';
 import { LoaderService } from './loader/loader.service';
+import { LibraryService } from './library.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     SettingsService,
-    LoaderService
+    LoaderService,
+    LibraryService
   ]
 };

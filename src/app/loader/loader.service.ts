@@ -16,9 +16,7 @@ import { HapiFhirDriver } from '../driver/hapi_driver';
 import { WildFhirDriver } from '../driver/wildfhir_driver';
 import { FhirCandleDriver } from '../driver/fhir_candle_driver';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class LoaderService {
   public configurationSubject = new BehaviorSubject<StackConfiguration | null>(null);
   private filesSubject = new BehaviorSubject<DataFile[]>([]);
