@@ -2,7 +2,8 @@
 
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
-import { Library, Parameters } from 'fhir/r4';
+import { Library, Parameters, Bundle } from 'fhir/r4';
+import { Observable } from 'rxjs';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoaderService } from './loader/loader.service';
@@ -31,14 +32,10 @@ export class LibraryService extends BaseService {
 		return this.loaderService.currentConfiguration?.fhir_base_url + LibraryService.LIBRARY_PATH;
 	}
 
-	// queryParameters() {
-	// 	return `_sort=${this.order == 'asc' ? '' : '-'}${this.sort}` + `&_count=${this.pageSize}&_getpagesoffset=${this.offset}`;
-	// }
 
-	// index(): Observable<Bundle<Library>> {
-	// 	let b = this.http.get<Bundle<Library>>(this.url() + "?" + this.queryParameters(), { headers: this.backendService.headers() });
-	// 	return b;
-	// }
+	search(searchTerm: string): Observable<Bundle<Library>> {
+		return this.http.get<Bundle<Library>>(this.url() + "?title=" + searchTerm, { headers: this.headers() });
+	}
 
 	urlFor(id: string) {
 		return this.loaderService.currentConfiguration?.fhir_base_url + '/Library/' + id;

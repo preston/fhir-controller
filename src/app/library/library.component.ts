@@ -1,7 +1,7 @@
 // Author: Preston Lee
 
 import { Component, OnChanges, SimpleChanges } from '@angular/core';
-import { Library } from 'fhir/r4';
+import { Library, Bundle } from 'fhir/r4';
 import { LibraryService } from '../library.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +24,12 @@ export class LibraryComponent implements OnChanges {
 	public static DEFAULT_LIBRARY_VERSION = "0.0.0";
 	public libraryVersion: string = LibraryComponent.DEFAULT_LIBRARY_VERSION;
 	public libraryDescription: string = "";
+
+	// Search functionality
+	public searchTerm: string = "";
+	public searchResults: Library[] = [];
+	public isSearching: boolean = false;
+	public showSearchResults: boolean = false;
 
 	constructor(
 		protected libraryService: LibraryService,
@@ -184,6 +190,52 @@ export class LibraryComponent implements OnChanges {
 			],
 		};
 		return libraryResource;
+	}
+
+	// Search functionality methods
+	searchLibraries() {
+		if (!this.searchTerm.trim()) {
+			this.toastrService.warning('Please enter a search term', 'Search Required');
+			return;
+		}
+
+		this.isSearching = true;
+		this.libraryService.search(this.searchTerm).subscribe({
+			next: (bundle: Bundle<Library>) => {
+				this.isSearching = false;
+				if (bundle.entry && bundle.entry.length > 0) {
+					this.searchResults = bundle.entry.map(entry => entry.resource!);
+					this.showSearchResults = true;
+					this.toastrService.success(`Found ${this.searchResults.length} library(ies)`, 'Search Results');
+				} else {
+					this.searchResults = [];
+					this.showSearchResults = true;
+					this.toastrService.info('No libraries found matching your search', 'No Results');
+				}
+			},
+			error: (error: any) => {
+				this.isSearching = false;
+				console.error('Error searching libraries:', error);
+				this.toastrService.error('Failed to search libraries. Please check your connection.', 'Search Error');
+			}
+		});
+	}
+
+	selectLibrary(library: Library) {
+		if (library.id) {
+			this.libraryService.libraryId = library.id;
+			this.showSearchResults = false;
+			this.searchTerm = "";
+			this.searchResults = [];
+			this.reloadLibraryFromServer();
+			this.toastrService.success(`Selected library: ${library.name || library.id}`, 'Library Selected');
+		}
+	}
+
+	clearSearch() {
+		this.searchTerm = "";
+		this.searchResults = [];
+		this.showSearchResults = false;
 	}
 
 }

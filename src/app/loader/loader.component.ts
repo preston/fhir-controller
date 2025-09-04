@@ -90,28 +90,8 @@ export class LoaderComponent implements OnInit, OnDestroy {
 		// Get the current driver from the service
 		// this.driver = this.loaderService.currentDriver;
 
-		// Handle URL parameters
-		let url = this.route.queryParams.subscribe({
-			next: (params) => {
-				let url = params["url"];
-				if (url) {
-					console.log('Loading from URL: ' + url);
-					this.configuration_file = url;
-					this.loaderService.loadStackConfiguration(url).subscribe({
-						next: () => {
-							// Configuration loaded successfully
-						},
-						error: (e) => {
-							this.toastrService.warning("The remote file URL couldn't be loaded, sorry. Check the URL and your connectivity and try again.", "Couldn't load URL");
-						}
-					});
-				} else {
-					console.log('No URL provided. Loading for default configuration file.');
-					this.reloadStackConfiguration();
-				}
-			}
-		});
-		this.subscriptions.push(url);
+		// Configuration loading is now handled in AppComponent
+		// No need to load configuration here anymore
 	}
 
 	ngOnDestroy() {
