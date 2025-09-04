@@ -1,7 +1,7 @@
 {
   "name": "stack",
-  "description": "Skycapp FHIR resource server and application stack controller.",
-  "version": "3.0.1",
+  "description": "FHIR resource server controller and utilities.",
+  "version": "3.1.0",
   "scripts": {
     "ng": "ng",
     "start": "envsubst < src/assets/configuration.template.js > src/assets/configuration.js && ng serve",

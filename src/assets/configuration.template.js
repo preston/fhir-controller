@@ -1,4 +1,4 @@
 (function(window) {
     // Environment variables
-    // window["STACK_CONTROLLER_NAME"] = "${STACK_CONTROLLER_NAME}";
+    // window["FHIR_CONTROLLER_NAME"] = "${FHIR_CONTROLLER_NAME}";
 })(this);
