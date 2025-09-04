@@ -21,7 +21,7 @@
 
         <!-- Search Results -->
         <div *ngIf="showSearchResults">
-            <h6>Search Results:</h6>
+            <!-- <h6>Search Results:</h6> -->
             <div *ngIf="searchResults.length > 0" class="list-group">
                 <button *ngFor="let library of searchResults"
                     class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -68,11 +68,7 @@
                 {{ isNewLibrary ? 'New Library' : 'Library: ' + (libraryService.libraryId || 'Unknown') }}
             </h5>
             <div class="btn-group">
-                <button class="btn btn-outline-danger btn-sm" (click)="clearSelection()" 
-                        title="Close library without saving changes">
-                    <span class="bi bi-x-circle"></span> Close Library
-                </button>
-                <button class="btn btn-outline-secondary btn-sm" (click)="clearSelection()">
+                <button class="btn btn-outline-danger" (click)="clearSelection()">
                     <span class="bi bi-arrow-left"></span> Back to Search
                 </button>
             </div>
