@@ -334,4 +334,16 @@ export class LibraryComponent implements OnChanges {
 		this.toastrService.info("Cleared selection. You can now search for existing libraries or create a new one.", "Selection Cleared");
 	}
 
+	/**
+	 * Check if all required form fields are filled
+	 */
+	isFormValid(): boolean {
+		return !!(
+			this.libraryService.libraryId?.trim() &&
+			this.libraryVersion?.trim() &&
+			this.libraryDescription?.trim() &&
+			this.cql?.trim()
+		);
+	}
+
 }

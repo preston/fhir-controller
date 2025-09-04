@@ -35,7 +35,7 @@ export class LibraryService extends BaseService {
 
 
 	search(searchTerm: string): Observable<Bundle<Library>> {
-		return this.http.get<Bundle<Library>>(this.url() + "?description:contains=" + searchTerm, { headers: this.headers() });
+		return this.http.get<Bundle<Library>>(this.url() + "?title:contains=" + searchTerm, { headers: this.headers() });
 	}
 
 	urlFor(id: string) {
