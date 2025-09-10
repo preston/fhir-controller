@@ -1,11 +1,13 @@
 // Author: Preston Lee
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { LoaderService } from '../loader/loader.service';
 import { StackConfiguration } from '../loader/stack_configuration';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-navigation',
@@ -14,7 +16,7 @@ import { StackConfiguration } from '../loader/stack_configuration';
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss'
 })
-export class NavigationComponent implements OnInit, OnDestroy {
+export class NavigationComponent implements OnInit, OnDestroy, AfterViewInit {
   // title = 'FHIR Controller';
   // configuration: StackConfiguration | null = null;
   
@@ -36,6 +38,16 @@ export class NavigationComponent implements OnInit, OnDestroy {
       this.loaderService.configuration$.subscribe(config => {
       })
     );
+  }
+
+  ngAfterViewInit() {
+    // Initialize Bootstrap dropdowns
+    if (typeof bootstrap !== 'undefined') {
+      const dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+      dropdownElementList.map(function (dropdownToggleEl) {
+        return new bootstrap.Dropdown(dropdownToggleEl);
+      });
+    }
   }
 
   ngOnDestroy() {

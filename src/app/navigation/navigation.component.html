@@ -33,10 +33,51 @@
                         Configuration
                     </a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="me-1 bi bi-book"></i>
+                        Learn
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" [routerLink]="['/learn/usage-tutorial']" routerLinkActive="active">
+                                <i class="me-2 bi bi-book"></i>
+                                Usage Tutorial
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" [routerLink]="['/learn/build-your-own']" routerLinkActive="active">
+                                <i class="me-2 bi bi-tools"></i>
+                                Build Your Own
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://github.com/preston/fhir-controller-template" target="_blank" rel="noopener noreferrer">
+                                <i class="me-2 bi bi-github"></i>
+                                FHIR Controller Template
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://github.com/preston/fhir-controller" target="_blank" rel="noopener noreferrer">
+                                <i class="me-2 bi bi-github"></i>
+                                FHIR Controller Source
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://github.com/preston/fhir-controller-cli" target="_blank" rel="noopener noreferrer">
+                                <i class="me-2 bi bi-github"></i>
+                                FHIR Controller CLI Source
+                            </a>
+                        </li>
+                       
+                    </ul>
+                </li>
             </ul>
 
             <!-- Right side items -->
             <ul class="navbar-nav">
+                
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" [routerLink]="['/settings']" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">
                         <i class="me-1 bi bi-gear"></i>

@@ -1,0 +1,100 @@
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4">
+                <i class="bi bi-book me-2"></i>
+                Usage Tutorial
+            </h1>
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2>Getting Started with FHIR Controller</h2>
+                    <p class="lead">
+                        FHIR Controller is a simple tool for seeding FHIR servers with data and CQL libraries for any
+                        number of predefined scenarios. Developers add their custom FHIR data files into official FHIR
+                        Controller images to provide you with one-click FHIR data loading utilities that you can use
+                        with your own FHIR servers running on your local computer, behind your corporate firewall, and
+                        offline environments.
+                        This tutorial will guide you through basic features and workflows.
+                    </p>
+
+                    <h3>Loader</h3>
+                    <p>
+                        The <a [routerLink]="['/']"><strong>Loader</strong></a> tab lets users load seed data and reset their FHIR servers to a
+                        default state. Here you can:
+                    </p>
+                    <ul>
+                        <li>Upload default sets of FHIR data files</li>
+                        <li>Load CQL logic as FHIR Library resources</li>
+                        <li>Set alternate local FHIR server URLs</li>
+                        <li>Optionally select a different data loading scenario, if configured</li>
+                    </ul>
+
+                    <h3>Exploring CQL Libraries</h3>
+                    <p>
+                        The <a [routerLink]="['/libraries']"><strong>CQL Libraries</strong></a> tab allows you to:
+                    </p>
+                    <ul>
+                        <li>Search for and view CQL libraries currently loaded into the server</li>
+                        <li>Execute CQL queries against in the server</li>
+                        <li>Perform basic editing of CQL and update the server</li>
+                        <li>Trigger running of CQL on the server</li>
+                    </ul>
+
+                    <h3>Configuration Management</h3>
+                    <p>
+                        The <a [routerLink]="['/configuration']"><strong>Configuration</strong></a> tab provides the ability to edit the FHIR Controller
+                        application configuration file as currently loaded, temporarily apply it to test your changes,
+                        download it, and even create a new configuration from scratch.
+                    </p>
+
+                    <h3>Settings</h3>
+                    <p>
+                        The <a [routerLink]="['/settings']"><strong>Settings</strong></a> tab lets you:
+                    </p>
+                    <ul>
+                        <li>Configure application preferences</li>
+                        <li>Manage user interface options</li>
+                        <li>Opt in to experimental and developer settings</li>
+                    </ul>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Tip:</strong> Start with the sample data provided in the Loader tab to get familiar with
+                        the interface before loading your own data.
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <h5 class="mb-0">Need Help?</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>If you need additional assistance:</p>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <a href="https://github.com/skycapp/fhir-controller" target="_blank"
+                                        class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="bi bi-github me-1"></i>
+                                        View Source Code
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="/learn/build-your-own" class="btn btn-outline-secondary btn-sm w-100">
+                                        <i class="bi bi-wrench me-1"></i>
+                                        Build Your Own
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="https://chat.fhir.org/#narrow/channel/179166-implementers" target="_blank" class="btn btn-outline-info btn-sm w-100">
+                                        <i class="bi bi-chat-dots me-1"></i>
+                                        FHIR Implementers Chat
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

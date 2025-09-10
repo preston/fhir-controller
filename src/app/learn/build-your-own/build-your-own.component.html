@@ -1,0 +1,153 @@
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4">
+                <i class="bi bi-tools me-2"></i>
+                Build Your Own FHIR Data Distribution Tool
+            </h1>
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2>Distributing Data with a Custom FHIR Controller</h2>
+                    <p class="lead">
+                        Learn how to set up and customize FHIR Controller using GitHub and Docker to distribute data and
+                        loading tools to
+                        your users, without writting any code.
+                    </p>
+
+                    <h3>What is the FHIR Controller?</h3>
+                    <p>
+                        The FHIR Controller is a great tool that allows users to set up their own FHIR server using your
+                        data
+                        without requiring you to provide scripts or initialization code. You put your data files
+                        into your own data-only Docker image that extends our handy precompiled FHIR Controller
+                        application image, add
+                        a `stack.json` metadata file, and you're good to go.
+                    </p>
+                    <p>
+                        Users can
+                        then load your FHIR Bundles and CQL into their own FHIR resource servers, and even purging it of
+                        all existing resources (if supported and enabled by the
+                        FHIR server). Your `stack.json` file will define the order in which to load the data files, and
+                        optionally different scenarios in which to load them.
+
+                    </p>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Note:</strong> A FHIR Controller is a client-only web application that runs completely
+                        within the browser,
+                        with all commands performed via FHIR API calls. FHIR Controller does not have their own backend
+                        service; however, the optional <a href="https://github.com/preston/fhir-controller-cli"
+                            target="_blank">FHIR Controller CLI</a> provides a command line interface for headless FHIR
+                        Controller functions.
+                    </div>
+
+                    <h3>Getting Started</h3>
+                    <p>
+                    </p>
+                    <ul>
+                        <li><strong>Fork</strong> the
+                            <a href="https://github.com/preston/fhir-controller-template" target="_blank">Custom FHIR
+                                Controller
+                                Template</a> project.
+                        <li><strong>Add a Data File Directory</strong> and include any number of FHIR Bundles (.json
+                            only) and CQL files (.cql only) into a project directory.</li>
+                        <li><strong>Customize the `stack.json` File</strong> by hand or the UI tool (See below
+                            instructions).</li>
+                        <li><strong>Build and Test</strong> with Docker or other container builder and runtime.</li>
+                    </ul>
+
+
+
+                    <h3>Edit Your `stack.json` File</h3>
+                    <p>Edit the `stack.json` file to define the order in which to load the data files, and optionally
+                        different scenarios in which to load them. </p>
+
+                    <p>Scenarios are an optional concept. If you provide them, you can load the data files in different
+                        scenarios. For example, you can put a data file into a "full", "light", and the "default"
+                        scenario. If scenarios are not provided for a data file, the data file will automatically be
+                        included in the "default" scenario _only_. If a data file provides a list of scenarios ids and
+                        you want it included in the "default" scenario (_and_ any additional specified scenarios), you
+                        must explicitly include the "default" scenario id in the list.</p>
+                    <p>You can optionally use the <a href="/configuration" routerLink="/configuration">configuration</a>
+                        page's visual editor for currently-loaded `stack.json` file, as well as the ability to create a
+                        new `stack.json` file from scratch.</p>
+
+
+                    <h3>Building and Running Your Custom FHIR Controller</h3>
+                    <p>Use the following Docker commands to build and run your FHIR Controller:</p>
+
+                    <h4>Building Your Image via Docker</h4>
+                    <p>If using Docker Desktop, you can use the following commands to build your custom FHIR Controller.
+                        We do not require Docker Desktop, and any OCI compliant builder should work fine.</p>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">For yourself</h6>
+                        </div>
+                        <div class="card-body">
+                            <pre><code>docker build -t yourname/my-fhir-controller:latest .</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">We provide native multi-architecture builds for amd64 and arm64 CPU
+                                architectures, which covers almost all desktop and server machines.</h6>
+                        </div>
+                        <div class="card-body">
+                            <pre><code>docker buildx build --platform linux/amd64,linux/arm64 -t yourname/my-fhir-controller:latest</code></pre>
+                        </div>
+                    </div>
+
+                    <h4>Running Your Image</h4>
+                    <p>Run your image using the following command. This will assign it to port 4200:</p>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <pre><code>docker run -d -p 4200:80 yourname/my-fhir-controller:latest</code></pre>
+                        </div>
+                    </div>
+
+                    <p>
+                        You now have your own FHIR Controller running on port 4200 at
+                        <a href="http://localhost:4200" target="_blank">http://localhost:4200</a>!
+                    </p>
+
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <strong>Success!</strong> As long as you have your FHIR server running at the location specified
+                        in your `stack.json` file , you can interact with it
+                        using the FHIR Controller you've just created.
+                    </div>
+
+                </div>
+                <div class="col-lg-4">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Reference</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Essential commands and links:</p>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <a href="https://github.com/lee-informatics/FHIR-Controller" target="_blank"
+                                        class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="bi bi-github me-1"></i>
+                                        FHIR Controller Source Code
+                                    </a>
+                                </li>
+                                <li class="mb-2">
+                                    <a href="https://chat.fhir.org/#narrow/channel/179166-implementers" target="_blank"
+                                        class="btn btn-outline-info btn-sm w-100">
+                                        <i class="bi bi-chat-dots me-1"></i>
+                                        FHIR Implementers Chat
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
