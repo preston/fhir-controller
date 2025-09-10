@@ -1,1 +1,400 @@
-<p>configuration-editor-component works!</p>
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2 class="card-title mb-0" [class.has-unsaved-changes]="hasUnsavedChanges">
+              <i class="bi bi-gear-fill me-2"></i>
+              Configuration Editor
+              <span *ngIf="isNewConfiguration" class="badge bg-success ms-2">New Configuration</span>
+            </h2>
+            <small *ngIf="!isNewConfiguration && currentConfiguration" class="text-muted">
+              Editing: {{ currentConfiguration.title }}
+            </small>
+          </div>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-info" (click)="createNewConfiguration()">
+              <i class="bi bi-plus-circle me-1"></i>
+              New Configuration
+            </button>
+            <button type="button" class="btn btn-outline-primary" (click)="resetForm()">
+              <i class="bi bi-arrow-clockwise me-1"></i>
+              Reset
+            </button>
+            <button type="button" class="btn btn-success" (click)="saveConfiguration()">
+              <i class="bi bi-check-circle me-1"></i>
+              Apply Configuration
+            </button>
+            <button type="button" class="btn btn-primary" (click)="downloadConfiguration()">
+              <i class="bi bi-download me-1"></i>
+              Download JSON
+            </button>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <!-- Validation Errors -->
+          <div *ngIf="validationErrors.length > 0" class="alert alert-danger" role="alert">
+            <h6 class="alert-heading">
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              Validation Errors
+            </h6>
+            <ul class="mb-0">
+              <li *ngFor="let error of validationErrors">{{ error }}</li>
+            </ul>
+          </div>
+
+          <!-- Configuration Form -->
+          <form *ngIf="configurationForm" [formGroup]="configurationForm" (ngSubmit)="saveConfiguration()">
+            
+            <!-- Basic Configuration Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <h4 class="text-primary border-bottom pb-2">
+                  <i class="bi bi-info-circle me-2"></i>
+                  Basic Configuration
+                </h4>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="title"
+                  formControlName="title"
+                  [class.is-invalid]="configurationForm.get('title')?.invalid && configurationForm.get('title')?.touched"
+                  placeholder="Enter configuration title">
+                <div *ngIf="configurationForm.get('title')?.invalid && configurationForm.get('title')?.touched" class="invalid-feedback">
+                  Title is required and must be at least 1 character long.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="driver" class="form-label">Driver Type <span class="text-danger">*</span></label>
+                <select 
+                  class="form-select" 
+                  id="driver"
+                  formControlName="driver"
+                  [class.is-invalid]="configurationForm.get('driver')?.invalid && configurationForm.get('driver')?.touched">
+                  <option [value]="DriverType.Generic">Generic</option>
+                  <option [value]="DriverType.Hapi">HAPI FHIR</option>
+                  <option [value]="DriverType.WildFHIR">WildFHIR</option>
+                  <option [value]="DriverType.FHIRCandle">FHIR Candle</option>
+                </select>
+                <div *ngIf="configurationForm.get('driver')?.invalid && configurationForm.get('driver')?.touched" class="invalid-feedback">
+                  Please select a driver type.
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-12">
+                <label for="fhir_base_url" class="form-label">FHIR Base URL <span class="text-danger">*</span></label>
+                <input 
+                  type="url" 
+                  class="form-control" 
+                  id="fhir_base_url"
+                  formControlName="fhir_base_url"
+                  [class.is-invalid]="configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched"
+                  placeholder="https://your-fhir-server.com/fhir">
+                <div *ngIf="configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched" class="invalid-feedback">
+                  Please enter a valid HTTP/HTTPS URL.
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-12">
+                <label for="instructions" class="form-label">Instructions <span class="text-danger">*</span></label>
+                <textarea 
+                  class="form-control" 
+                  id="instructions"
+                  formControlName="instructions"
+                  [class.is-invalid]="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched"
+                  rows="4"
+                  placeholder="Enter user instructions in markdown format..."></textarea>
+                <div *ngIf="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched" class="invalid-feedback">
+                  Instructions are required.
+                </div>
+                <div class="form-text">Use markdown format for rich text instructions.</div>
+              </div>
+            </div>
+
+            <!-- Data Files Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h4 class="text-primary border-bottom pb-2 mb-0">
+                    <i class="bi bi-file-earmark-medical me-2"></i>
+                    Data Files
+                  </h4>
+                  <button type="button" class="btn btn-outline-success btn-sm" (click)="addDataFile()">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add Data File
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div formArrayName="data">
+              <div *ngFor="let dataFile of dataFiles.controls; let i = index" class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0">Data File {{ i + 1 }}</h6>
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeDataFile(i)">
+                    <i class="bi bi-trash me-1"></i>
+                    Remove
+                  </button>
+                </div>
+                <div class="card-body" [formGroupName]="i">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label [for]="'file_' + i" class="form-label">File Path <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        [id]="'file_' + i"
+                        formControlName="file"
+                        [class.is-invalid]="dataFile.get('file')?.invalid && dataFile.get('file')?.touched"
+                        placeholder="data/example/patient.json">
+                      <div *ngIf="dataFile.get('file')?.invalid && dataFile.get('file')?.touched" class="invalid-feedback">
+                        File path is required.
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <label [for]="'name_' + i" class="form-label">Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        [id]="'name_' + i"
+                        formControlName="name"
+                        [class.is-invalid]="dataFile.get('name')?.invalid && dataFile.get('name')?.touched"
+                        placeholder="Patient Data">
+                      <div *ngIf="dataFile.get('name')?.invalid && dataFile.get('name')?.touched" class="invalid-feedback">
+                        Name is required.
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <label [for]="'priority_' + i" class="form-label">Priority</label>
+                      <input 
+                        type="number" 
+                        class="form-control" 
+                        [id]="'priority_' + i"
+                        formControlName="priority"
+                        [class.is-invalid]="dataFile.get('priority')?.invalid && dataFile.get('priority')?.touched"
+                        min="1">
+                      <div *ngIf="dataFile.get('priority')?.invalid && dataFile.get('priority')?.touched" class="invalid-feedback">
+                        Priority must be at least 1.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label [for]="'description_' + i" class="form-label">Description <span class="text-danger">*</span></label>
+                      <textarea 
+                        class="form-control" 
+                        [id]="'description_' + i"
+                        formControlName="description"
+                        [class.is-invalid]="dataFile.get('description')?.invalid && dataFile.get('description')?.touched"
+                        rows="2"
+                        placeholder="Description of the data file..."></textarea>
+                      <div *ngIf="dataFile.get('description')?.invalid && dataFile.get('description')?.touched" class="invalid-feedback">
+                        Description is required.
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <label [for]="'type_' + i" class="form-label">Type <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        [id]="'type_' + i"
+                        formControlName="type"
+                        [class.is-invalid]="dataFile.get('type')?.invalid && dataFile.get('type')?.touched"
+                        placeholder="Patient">
+                      <div *ngIf="dataFile.get('type')?.invalid && dataFile.get('type')?.touched" class="invalid-feedback">
+                        Type is required.
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <label [for]="'loader_' + i" class="form-label">Loader Type <span class="text-danger">*</span></label>
+                      <select 
+                        class="form-select" 
+                        [id]="'loader_' + i"
+                        formControlName="loader"
+                        [class.is-invalid]="dataFile.get('loader')?.invalid && dataFile.get('loader')?.touched"
+                        (change)="onDataFileLoaderChange(i)">
+                        <option [value]="LoaderType.FHIR_BUNDLE">FHIR Bundle</option>
+                        <option [value]="LoaderType.CQL_AS_FHIR_LIBRARY">CQL as FHIR Library</option>
+                      </select>
+                      <div *ngIf="dataFile.get('loader')?.invalid && dataFile.get('loader')?.touched" class="invalid-feedback">
+                        Please select a loader type.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <div class="form-check">
+                        <input 
+                          class="form-check-input" 
+                          type="checkbox" 
+                          [id]="'load_' + i"
+                          formControlName="load">
+                        <label class="form-check-label" [for]="'load_' + i">
+                          Load this file by default
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- CQL Evaluation Section (only for CQL libraries) -->
+                  <div *ngIf="dataFile.get('loader')?.value === LoaderType.CQL_AS_FHIR_LIBRARY" class="mt-3">
+                    <div class="card bg-light">
+                      <div class="card-header">
+                        <h6 class="mb-0">CQL Evaluation Settings</h6>
+                      </div>
+                      <div class="card-body" formGroupName="evaluate">
+                        <div class="row mb-3">
+                          <div class="col-md-6">
+                            <label [for]="'evaluate_id_' + i" class="form-label">Library ID <span class="text-danger">*</span></label>
+                            <input 
+                              type="text" 
+                              class="form-control" 
+                              [id]="'evaluate_id_' + i"
+                              formControlName="id"
+                              [class.is-invalid]="dataFile.get('evaluate.id')?.invalid && dataFile.get('evaluate.id')?.touched"
+                              placeholder="Library ID for evaluation">
+                            <div *ngIf="dataFile.get('evaluate.id')?.invalid && dataFile.get('evaluate.id')?.touched" class="invalid-feedback">
+                              Library ID is required for CQL libraries.
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <label class="form-label mb-0">Evaluation Subjects</label>
+                              <button type="button" class="btn btn-outline-primary btn-sm" (click)="addSubject(dataFile.get('evaluate'))">
+                                <i class="bi bi-plus-circle me-1"></i>
+                                Add Subject
+                              </button>
+                            </div>
+                            <div formArrayName="subjects">
+                              <div *ngFor="let subject of getSubjectsArray(dataFile.get('evaluate'))?.controls || []; let j = index" class="row mb-2" [formGroupName]="j">
+                                <div class="col-md-5">
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    formControlName="id"
+                                    [id]="'subject_id_' + i + '_' + j"
+                                    placeholder="Subject ID">
+                                </div>
+                                <div class="col-md-5">
+                                  <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    formControlName="name"
+                                    [id]="'subject_name_' + i + '_' + j"
+                                    placeholder="Subject Name">
+                                </div>
+                                <div class="col-md-2">
+                                  <button type="button" class="btn btn-outline-danger btn-sm w-100" (click)="removeSubject(dataFile.get('evaluate')!, j)">
+                                    <i class="bi bi-trash"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Links Section -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h4 class="text-primary border-bottom pb-2 mb-0">
+                    <i class="bi bi-link-45deg me-2"></i>
+                    Links
+                  </h4>
+                  <button type="button" class="btn btn-outline-success btn-sm" (click)="addLink()">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add Link
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div formArrayName="links">
+              <div *ngFor="let link of links.controls; let i = index" class="card mb-3" [formGroupName]="i">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-5">
+                      <label [for]="'link_name_' + i" class="form-label">Link Name <span class="text-danger">*</span></label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        [id]="'link_name_' + i"
+                        formControlName="name"
+                        [class.is-invalid]="link.get('name')?.invalid && link.get('name')?.touched"
+                        placeholder="Documentation">
+                      <div *ngIf="link.get('name')?.invalid && link.get('name')?.touched" class="invalid-feedback">
+                        Link name is required.
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <label [for]="'link_url_' + i" class="form-label">URL <span class="text-danger">*</span></label>
+                      <input 
+                        type="url" 
+                        class="form-control" 
+                        [id]="'link_url_' + i"
+                        formControlName="url"
+                        [class.is-invalid]="link.get('url')?.invalid && link.get('url')?.touched"
+                        placeholder="https://example.com">
+                      <div *ngIf="link.get('url')?.invalid && link.get('url')?.touched" class="invalid-feedback">
+                        Please enter a valid HTTP/HTTPS URL.
+                      </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                      <button type="button" class="btn btn-outline-danger btn-sm w-100" (click)="removeLink(i)">
+                        <i class="bi bi-trash me-1"></i>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Reset Form
+                  </button>
+                  <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Apply Configuration
+                  </button>
+                  <button type="button" class="btn btn-primary" (click)="downloadConfiguration()">
+                    <i class="bi bi-download me-1"></i>
+                    Download JSON
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

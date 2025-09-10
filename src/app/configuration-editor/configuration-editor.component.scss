@@ -1,0 +1,171 @@
+// Configuration Editor Component Styles
+
+.card {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.text-primary {
+  color: #0d6efd !important;
+}
+
+.btn-group .btn {
+  border-radius: 0.375rem;
+}
+
+.btn-group .btn:not(:last-child) {
+  margin-right: 0.5rem;
+}
+
+.invalid-feedback {
+  display: block;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.alert {
+  border-radius: 0.5rem;
+}
+
+.alert-heading {
+  font-weight: 600;
+}
+
+.border-bottom {
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+// Custom styles for data file cards
+.card.mb-3 {
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.card.mb-3:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+// CQL evaluation section styling
+.card.bg-light {
+  border: 1px solid #e9ecef;
+}
+
+// Form array styling
+.form-array-item {
+  position: relative;
+}
+
+// Button spacing
+.gap-2 > * + * {
+  margin-left: 0.5rem;
+}
+
+// Icon spacing
+.bi {
+  vertical-align: -0.125em;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn-group .btn {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn-group .btn:last-child {
+    margin-bottom: 0;
+  }
+  
+  .d-flex.justify-content-end {
+    justify-content: center !important;
+  }
+  
+  .gap-2 {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+// Loading states
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+// Focus states
+.form-control:focus,
+.form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+// Custom checkbox styling
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+// Card header button alignment
+.card-header .btn-group {
+  align-items: center;
+}
+
+// New configuration badge styling
+.badge.bg-success {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+}
+
+// Configuration status text
+.text-muted {
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+// Unsaved changes indicator
+.has-unsaved-changes {
+  position: relative;
+}
+
+.has-unsaved-changes::after {
+  content: '*';
+  color: #ffc107;
+  font-weight: bold;
+  margin-left: 0.25rem;
+}
+
+// Priority input styling
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
