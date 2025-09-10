@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { MarkdownModule } from 'ngx-markdown';
 
 import { LoaderService } from '../loader/loader.service';
 import { StackConfiguration } from '../loader/stack_configuration';
@@ -13,7 +14,7 @@ import { LoaderType } from '../loader/loader_type';
 
 @Component({
   selector: 'app-configuration-editor',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MarkdownModule],
   templateUrl: './configuration-editor.component.html',
   styleUrl: './configuration-editor.component.scss'
 })
@@ -24,6 +25,10 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   validationErrors: string[] = [];
   isNewConfiguration: boolean = false;
   hasUnsavedChanges: boolean = false;
+  
+  // Drag and drop properties
+  private draggedIndex: number | null = null;
+  private draggedOverIndex: number | null = null;
 
   // Enums for template
   DriverType = DriverType;
@@ -434,6 +439,108 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     this.validationErrors = [];
     
     this.toastrService.info('Creating new configuration. Fill in the details below.', 'New Configuration');
+  }
+
+  // Drag and drop methods
+  onDragStart(event: DragEvent, index: number): void {
+    this.draggedIndex = index;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/html', '');
+    }
+    const target = event.currentTarget as HTMLElement;
+    target?.classList.add('dragging');
+  }
+
+  onDragEnd(event: DragEvent): void {
+    this.draggedIndex = null;
+    this.draggedOverIndex = null;
+    const target = event.currentTarget as HTMLElement;
+    target?.classList.remove('dragging');
+    // Remove all drag-over classes
+    document.querySelectorAll('.draggable-item').forEach(item => {
+      item.classList.remove('drag-over');
+    });
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+  }
+
+  onItemDragOver(event: DragEvent, index: number): void {
+    event.preventDefault();
+    if (this.draggedIndex !== null && this.draggedIndex !== index) {
+      this.draggedOverIndex = index;
+      const target = event.currentTarget as HTMLElement;
+      target?.classList.add('drag-over');
+    }
+  }
+
+  onItemDrop(event: DragEvent, dropIndex: number): void {
+    event.preventDefault();
+    const target = event.currentTarget as HTMLElement;
+    target?.classList.remove('drag-over');
+    
+    if (this.draggedIndex !== null && this.draggedIndex !== dropIndex) {
+      this.moveDataFile(this.draggedIndex, dropIndex);
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  private moveDataFile(fromIndex: number, toIndex: number): void {
+    const dataArray = this.dataFiles;
+    const item = dataArray.at(fromIndex);
+    
+    // Remove the item from the original position
+    dataArray.removeAt(fromIndex);
+    
+    // Insert it at the new position
+    dataArray.insert(toIndex, item);
+    
+    this.hasUnsavedChanges = true;
+    this.toastrService.info('Data file order updated', 'Reorder Complete');
+  }
+
+  // Sorting methods
+  sortDataFiles(sortBy: 'priority' | 'name' | 'type'): void {
+    const dataArray = this.dataFiles;
+    const items = dataArray.controls.map((control, index) => ({
+      control,
+      index,
+      value: control.value
+    }));
+
+    // Sort the items based on the selected criteria
+    items.sort((a, b) => {
+      switch (sortBy) {
+        case 'priority':
+          return (a.value.priority || 0) - (b.value.priority || 0);
+        case 'name':
+          return (a.value.name || '').localeCompare(b.value.name || '');
+        case 'type':
+          return (a.value.type || '').localeCompare(b.value.type || '');
+        default:
+          return 0;
+      }
+    });
+
+    // Clear the array and re-add items in sorted order
+    while (dataArray.length !== 0) {
+      dataArray.removeAt(0);
+    }
+
+    items.forEach(item => {
+      dataArray.push(item.control);
+    });
+
+    this.hasUnsavedChanges = true;
+    this.toastrService.info(`Data files sorted by ${sortBy}`, 'Sort Complete');
   }
 
   resetForm(): void {

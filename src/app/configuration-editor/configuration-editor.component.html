@@ -1,39 +1,37 @@
-<div class="container-fluid py-4">
+<div class="container py-4">
   <div class="row">
     <div class="col-12">
-      <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <div>
-            <h2 class="card-title mb-0" [class.has-unsaved-changes]="hasUnsavedChanges">
-              <i class="bi bi-gear-fill me-2"></i>
-              Configuration Editor
-              <span *ngIf="isNewConfiguration" class="badge bg-success ms-2">New Configuration</span>
-            </h2>
-            <small *ngIf="!isNewConfiguration && currentConfiguration" class="text-muted">
-              Editing: {{ currentConfiguration.title }}
-            </small>
-          </div>
-          <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-info" (click)="createNewConfiguration()">
-              <i class="bi bi-plus-circle me-1"></i>
-              New Configuration
-            </button>
-            <button type="button" class="btn btn-outline-primary" (click)="resetForm()">
-              <i class="bi bi-arrow-clockwise me-1"></i>
-              Reset
-            </button>
-            <button type="button" class="btn btn-success" (click)="saveConfiguration()">
-              <i class="bi bi-check-circle me-1"></i>
-              Apply Configuration
-            </button>
-            <button type="button" class="btn btn-primary" (click)="downloadConfiguration()">
-              <i class="bi bi-download me-1"></i>
-              Download JSON
-            </button>
-          </div>
+      <!-- Header Section -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="mb-1" [class.has-unsaved-changes]="hasUnsavedChanges">
+            <i class="bi bi-gear me-2"></i>
+            Configuration Editor
+            <span *ngIf="isNewConfiguration" class="badge bg-success ms-2">New</span>
+          </h2>
+          <small *ngIf="!isNewConfiguration && currentConfiguration" class="text-muted">
+            {{ currentConfiguration.title }}
+          </small>
         </div>
-        
-        <div class="card-body">
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="createNewConfiguration()">
+            <i class="bi bi-plus me-1"></i>
+            New
+          </button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="resetForm()">
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            Reset
+          </button>
+          <button type="button" class="btn btn-success btn-sm" (click)="saveConfiguration()">
+            <i class="bi bi-check me-1"></i>
+            Apply
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="downloadConfiguration()">
+            <i class="bi bi-download me-1"></i>
+            Download
+          </button>
+        </div>
+      </div>
           <!-- Validation Errors -->
           <div *ngIf="validationErrors.length > 0" class="alert alert-danger" role="alert">
             <h6 class="alert-heading">
@@ -49,12 +47,9 @@
           <form *ngIf="configurationForm" [formGroup]="configurationForm" (ngSubmit)="saveConfiguration()">
             
             <!-- Basic Configuration Section -->
-            <div class="row mb-4">
+            <div class="row mb-3">
               <div class="col-12">
-                <h4 class="text-primary border-bottom pb-2">
-                  <i class="bi bi-info-circle me-2"></i>
-                  Basic Configuration
-                </h4>
+                <h5 class="text-muted mb-3">Basic Configuration</h5>
               </div>
             </div>
 
@@ -91,7 +86,6 @@
             </div>
 
             <div class="row mb-3">
-              <div class="col-12">
                 <label for="fhir_base_url" class="form-label">FHIR Base URL <span class="text-danger">*</span></label>
                 <input 
                   type="url" 
@@ -103,52 +97,109 @@
                 <div *ngIf="configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched" class="invalid-feedback">
                   Please enter a valid HTTP/HTTPS URL.
                 </div>
-              </div>
             </div>
 
-            <div class="row mb-4">
+            <div class="row mb-3">
               <div class="col-12">
-                <label for="instructions" class="form-label">Instructions <span class="text-danger">*</span></label>
-                <textarea 
-                  class="form-control" 
-                  id="instructions"
-                  formControlName="instructions"
-                  [class.is-invalid]="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched"
-                  rows="4"
-                  placeholder="Enter user instructions in markdown format..."></textarea>
-                <div *ngIf="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched" class="invalid-feedback">
-                  Instructions are required.
+                <label for="instructions" class="form-label mb-2">Instructions <span class="text-danger">*</span></label>
+                <div class="row">
+                  <!-- Editor Column -->
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-2">
+                      <small class="text-muted">
+                        <i class="bi bi-pencil me-1"></i>
+                        Editor
+                      </small>
+                    </div>
+                    <textarea 
+                      class="form-control" 
+                      id="instructions"
+                      formControlName="instructions"
+                      [class.is-invalid]="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched"
+                      rows="6"
+                      placeholder="Enter user instructions in markdown format..."></textarea>
+                    <div *ngIf="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched" class="invalid-feedback">
+                      Instructions are required.
+                    </div>
+                    <div class="form-text">Use markdown format for rich text instructions.</div>
+                  </div>
+                  
+                  <!-- Preview Column -->
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-2">
+                      <small class="text-muted">
+                        <i class="bi bi-eye me-1"></i>
+                        Preview
+                      </small>
+                    </div>
+                    <div class="markdown-preview">
+                      <div class="border rounded p-3 bg-light" style="min-height: 150px;">
+                        <div *ngIf="configurationForm.get('instructions')?.value; else noInstructions">
+                          <markdown [data]="configurationForm.get('instructions')?.value"></markdown>
+                        </div>
+                        <ng-template #noInstructions>
+                          <div class="text-muted fst-italic">No instructions entered yet...</div>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="form-text">Use markdown format for rich text instructions.</div>
               </div>
             </div>
 
             <!-- Data Files Section -->
-            <div class="row mb-4">
+            <div class="row mb-3">
               <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h4 class="text-primary border-bottom pb-2 mb-0">
-                    <i class="bi bi-file-earmark-medical me-2"></i>
-                    Data Files
-                  </h4>
-                  <button type="button" class="btn btn-outline-success btn-sm" (click)="addDataFile()">
-                    <i class="bi bi-plus-circle me-1"></i>
-                    Add Data File
-                  </button>
+                  <h5 class="text-muted mb-0">Data Files</h5>
+                  <div class="d-flex gap-2">
+                    <div class="dropdown">
+                      <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-sort-down me-1"></i>
+                        Sort
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" (click)="sortDataFiles('priority'); $event.preventDefault()">
+                          <i class="bi bi-sort-numeric-down me-2"></i>By Priority
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" (click)="sortDataFiles('name'); $event.preventDefault()">
+                          <i class="bi bi-sort-alpha-down me-2"></i>By Name
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" (click)="sortDataFiles('type'); $event.preventDefault()">
+                          <i class="bi bi-sort-alpha-down me-2"></i>By Type
+                        </a></li>
+                      </ul>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm" (click)="addDataFile()">
+                      <i class="bi bi-plus me-1"></i>
+                      Add File
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div formArrayName="data">
-              <div *ngFor="let dataFile of dataFiles.controls; let i = index" class="card mb-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <h6 class="mb-0">Data File {{ i + 1 }}</h6>
+            <div formArrayName="data" 
+                 (dragover)="onDragOver($event)" 
+                 (drop)="onDrop($event)">
+              <div *ngFor="let dataFile of dataFiles.controls; let i = index" 
+                   class="border rounded p-3 mb-3 bg-light draggable-item"
+                   [attr.data-index]="i"
+                   draggable="true"
+                   (dragstart)="onDragStart($event, i)"
+                   (dragend)="onDragEnd($event)"
+                   (dragover)="onItemDragOver($event, i)"
+                   (drop)="onItemDrop($event, i)">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-grip-vertical text-muted me-2 drag-handle" style="cursor: move;"></i>
+                    <h6 class="mb-0 text-muted">File {{ i + 1 }}</h6>
+                  </div>
                   <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeDataFile(i)">
-                    <i class="bi bi-trash me-1"></i>
-                    Remove
+                    <i class="bi bi-trash"></i>
                   </button>
                 </div>
-                <div class="card-body" [formGroupName]="i">
+                <div [formGroupName]="i">
                   <div class="row mb-3">
                     <div class="col-md-6">
                       <label [for]="'file_' + i" class="form-label">File Path <span class="text-danger">*</span></label>
@@ -252,11 +303,9 @@
 
                   <!-- CQL Evaluation Section (only for CQL libraries) -->
                   <div *ngIf="dataFile.get('loader')?.value === LoaderType.CQL_AS_FHIR_LIBRARY" class="mt-3">
-                    <div class="card bg-light">
-                      <div class="card-header">
-                        <h6 class="mb-0">CQL Evaluation Settings</h6>
-                      </div>
-                      <div class="card-body" formGroupName="evaluate">
+                    <div class="border rounded p-3 bg-white">
+                      <h6 class="mb-3 text-muted">CQL Evaluation</h6>
+                      <div formGroupName="evaluate">
                         <div class="row mb-3">
                           <div class="col-md-6">
                             <label [for]="'evaluate_id_' + i" class="form-label">Library ID <span class="text-danger">*</span></label>
@@ -276,10 +325,10 @@
                         <div class="row">
                           <div class="col-12">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                              <label class="form-label mb-0">Evaluation Subjects</label>
+                              <label class="form-label mb-0">Subjects</label>
                               <button type="button" class="btn btn-outline-primary btn-sm" (click)="addSubject(dataFile.get('evaluate'))">
-                                <i class="bi bi-plus-circle me-1"></i>
-                                Add Subject
+                                <i class="bi bi-plus me-1"></i>
+                                Add
                               </button>
                             </div>
                             <div formArrayName="subjects">
@@ -317,15 +366,12 @@
             </div>
 
             <!-- Links Section -->
-            <div class="row mb-4">
+            <div class="row mb-3">
               <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h4 class="text-primary border-bottom pb-2 mb-0">
-                    <i class="bi bi-link-45deg me-2"></i>
-                    Links
-                  </h4>
-                  <button type="button" class="btn btn-outline-success btn-sm" (click)="addLink()">
-                    <i class="bi bi-plus-circle me-1"></i>
+                  <h5 class="text-muted mb-0">Links</h5>
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="addLink()">
+                    <i class="bi bi-plus me-1"></i>
                     Add Link
                   </button>
                 </div>
@@ -333,41 +379,39 @@
             </div>
 
             <div formArrayName="links">
-              <div *ngFor="let link of links.controls; let i = index" class="card mb-3" [formGroupName]="i">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-5">
-                      <label [for]="'link_name_' + i" class="form-label">Link Name <span class="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [id]="'link_name_' + i"
-                        formControlName="name"
-                        [class.is-invalid]="link.get('name')?.invalid && link.get('name')?.touched"
-                        placeholder="Documentation">
-                      <div *ngIf="link.get('name')?.invalid && link.get('name')?.touched" class="invalid-feedback">
-                        Link name is required.
-                      </div>
+              <div *ngFor="let link of links.controls; let i = index" class="border rounded p-3 mb-3 bg-light" [formGroupName]="i">
+                <div class="row">
+                  <div class="col-md-5">
+                    <label [for]="'link_name_' + i" class="form-label">Link Name <span class="text-danger">*</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      [id]="'link_name_' + i"
+                      formControlName="name"
+                      [class.is-invalid]="link.get('name')?.invalid && link.get('name')?.touched"
+                      placeholder="Documentation">
+                    <div *ngIf="link.get('name')?.invalid && link.get('name')?.touched" class="invalid-feedback">
+                      Link name is required.
                     </div>
-                    <div class="col-md-5">
-                      <label [for]="'link_url_' + i" class="form-label">URL <span class="text-danger">*</span></label>
-                      <input 
-                        type="url" 
-                        class="form-control" 
-                        [id]="'link_url_' + i"
-                        formControlName="url"
-                        [class.is-invalid]="link.get('url')?.invalid && link.get('url')?.touched"
-                        placeholder="https://example.com">
-                      <div *ngIf="link.get('url')?.invalid && link.get('url')?.touched" class="invalid-feedback">
-                        Please enter a valid HTTP/HTTPS URL.
-                      </div>
+                  </div>
+                  <div class="col-md-5">
+                    <label [for]="'link_url_' + i" class="form-label">URL <span class="text-danger">*</span></label>
+                    <input 
+                      type="url" 
+                      class="form-control" 
+                      [id]="'link_url_' + i"
+                      formControlName="url"
+                      [class.is-invalid]="link.get('url')?.invalid && link.get('url')?.touched"
+                      placeholder="https://example.com">
+                    <div *ngIf="link.get('url')?.invalid && link.get('url')?.touched" class="invalid-feedback">
+                      Please enter a valid HTTP/HTTPS URL.
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                      <button type="button" class="btn btn-outline-danger btn-sm w-100" (click)="removeLink(i)">
-                        <i class="bi bi-trash me-1"></i>
-                        Remove
-                      </button>
-                    </div>
+                  </div>
+                  <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" (click)="removeLink(i)">
+                      <i class="bi bi-trash me-1"></i>
+                      Remove
+                    </button>
                   </div>
                 </div>
               </div>
@@ -377,24 +421,22 @@
             <div class="row mt-4">
               <div class="col-12">
                 <div class="d-flex justify-content-end gap-2">
-                  <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="resetForm()">
                     <i class="bi bi-arrow-clockwise me-1"></i>
-                    Reset Form
+                    Reset
                   </button>
-                  <button type="submit" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i>
-                    Apply Configuration
+                  <button type="submit" class="btn btn-success btn-sm">
+                    <i class="bi bi-check me-1"></i>
+                    Apply
                   </button>
-                  <button type="button" class="btn btn-primary" (click)="downloadConfiguration()">
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="downloadConfiguration()">
                     <i class="bi bi-download me-1"></i>
-                    Download JSON
+                    Download
                   </button>
                 </div>
               </div>
             </div>
           </form>
-        </div>
-      </div>
     </div>
   </div>
 </div>
