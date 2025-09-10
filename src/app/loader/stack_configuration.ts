@@ -3,6 +3,7 @@
 import { DriverType } from "../driver/driver_type";
 import { DataFile } from "./data_file";
 import { Link } from "./link";
+import { Scenario } from "./scenario";
 
 export class StackConfiguration {
 
@@ -12,5 +13,6 @@ export class StackConfiguration {
     public fhir_base_url: string = '';
     public links: Link[] = [];
     public driver: DriverType = DriverType.Generic;
+    public scenarios: Scenario[] = [];
 
 }

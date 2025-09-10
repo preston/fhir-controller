@@ -16,6 +16,7 @@ import { StackConfiguration } from './stack_configuration';
 import { LoaderType } from './loader_type';
 import { DriverType } from '../driver/driver_type';
 import { LoaderService } from './loader.service';
+import { Scenario } from './scenario';
 
 @Component({
 	selector: 'loader',
@@ -28,6 +29,9 @@ import { LoaderService } from './loader.service';
 export class LoaderComponent implements OnInit, OnDestroy {
 
 	evaluateSubject: string | null = null;
+	selectedScenario: string = 'default';
+	availableScenarios: Scenario[] = [];
+	filteredFiles: DataFile[] = [];
 
 	development: boolean = false;
 
@@ -56,16 +60,17 @@ export class LoaderComponent implements OnInit, OnDestroy {
 		// Subscribe to service observables
 		this.subscriptions.push(
 			this.loaderService.configuration$.subscribe(config => {
-				// if (config) {
-				// 	this.stack_configuration = config;
-				// 	this.driver = this.loaderService.currentDriver;
-				// }
+				if (config) {
+					this.updateAvailableScenarios();
+					this.updateFilteredFiles();
+				}
 			})
 		);
 
 		this.subscriptions.push(
 			this.loaderService.files$.subscribe(files => {
 				this.files_to_load = files;
+				this.updateFilteredFiles();
 			})
 		);
 
@@ -87,11 +92,9 @@ export class LoaderComponent implements OnInit, OnDestroy {
 			})
 		);
 
-		// Get the current driver from the service
-		// this.driver = this.loaderService.currentDriver;
-
-		// Configuration loading is now handled in AppComponent
-		// No need to load configuration here anymore
+		// Initialize scenarios and filtered files
+		this.updateAvailableScenarios();
+		this.updateFilteredFiles();
 	}
 
 	ngOnDestroy() {
@@ -182,5 +185,39 @@ export class LoaderComponent implements OnInit, OnDestroy {
 				// Error handled by service
 			}
 		});
+	}
+
+	private updateAvailableScenarios() {
+		const scenarios = this.loaderService.currentConfiguration?.scenarios || [];
+		// Always include a default scenario
+		const defaultScenario: Scenario = {
+			id: 'default',
+			name: 'Default',
+			description: 'All files without specific scenario assignments'
+		};
+		this.availableScenarios = [defaultScenario, ...scenarios];
+	}
+
+	private updateFilteredFiles() {
+		if (this.selectedScenario === 'default') {
+			// Include files with no scenarios or files that explicitly reference 'default'
+			this.filteredFiles = this.files_to_load.filter(file => 
+				!file.scenarios || file.scenarios.length === 0 || file.scenarios.includes('default')
+			);
+		} else {
+			// Include only files that reference the selected scenario
+			this.filteredFiles = this.files_to_load.filter(file => 
+				file.scenarios && file.scenarios.includes(this.selectedScenario)
+			);
+		}
+	}
+
+	onScenarioChange() {
+		this.updateFilteredFiles();
+	}
+
+	get selectedScenarioDescription(): string {
+		const scenario = this.availableScenarios.find(s => s.id === this.selectedScenario);
+		return scenario ? scenario.description : '';
 	}
 }

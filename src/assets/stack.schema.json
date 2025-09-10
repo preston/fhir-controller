@@ -130,6 +130,14 @@
                 "evaluate": {
                     "$ref": "#/$defs/evaluate",
                     "description": "Optional evaluation parameters for CQL libraries. Only used if the loader is 'cql-as-fhir-library'."
+                },
+                "scenarios": {
+                    "description": "Optional list of scenario IDs associated with this data file. When absent, it will be loaded only for the \"default\" scenario. When present, the data file will only be loaded for each explicitly specified scenario. If you wish to use scenarios and include it in the default scenario, you must explicitly include the \"default\" scenario.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_]*$"
+                    }
                 }
             }
         },
@@ -164,6 +172,30 @@
                             }
                         }
                     }
+                }
+            }
+        },
+        "scenario": {
+            "type": "object",
+            "description": "A scenario that can be associated with data files.",
+            "required": [
+                "id",
+                "name",
+                "description"
+            ],
+            "properties": {
+                "id": {
+                    "description": "Unique identifier for the scenario. Must start with a lowercase letter and contain only lowercase alphanumerics and underscores.",
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_]*$"
+                },
+                "name": {
+                    "description": "Human-readable name for the scenario.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Human-readable description of the scenario.",
+                    "type": "string"
                 }
             }
         }

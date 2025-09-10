@@ -1,6 +1,7 @@
 // Author: Preston Lee
 
 import { LoaderType } from "./loader_type";
+import { Scenario } from "./scenario";
 
 export class DataFile {
 
@@ -13,6 +14,7 @@ export class DataFile {
     public type: string = '';
     public priority: number = 1;
     public evaluate: EvaluateOptions | null = null;
+    public scenarios: string[] = [];
 
     // Set by the application.
     // public loaded: boolean = false;

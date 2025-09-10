@@ -36,8 +36,23 @@
             <div *ngIf="files_to_load.length > 0" class="">
                 <h4 class="mt-4">Files
                 </h4>
-                <button role="button" class="btn btn-md btn-outline-secondary" (click)="toggleSelected()"> <span
-                        class="bi bi-check-square"></span> Toggle Selections</button>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text"><span class="bi bi-diagram-3"></span>&nbsp;Scenario</span>
+                            <select class="form-control" [(ngModel)]="selectedScenario" (change)="onScenarioChange()">
+                                <option *ngFor="let scenario of availableScenarios" [value]="scenario.id">
+                                    {{scenario.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <small class="text-muted">{{selectedScenarioDescription}}</small>
+                    </div>
+                    <div class="col-md-6">
+                        <button role="button" class="btn btn-md btn-outline-secondary" (click)="toggleSelected()"> <span
+                                class="bi bi-check-square"></span> Toggle Selections</button>
+                    </div>
+                </div>
                 <div class="float-end">
                     <button class="btn btn-md btn-success" role="button" (click)="load()"
                         [disabled]="state == 'loading'"><span class="bi bi-save"> Load Selected File
@@ -50,7 +65,7 @@
 
                 <div class="my-2 list-group">
                     <!-- <span class="fw-lighter">The following data files will be loading in the following sequence. </span> -->
-                    <span *ngFor="let f of files_to_load" class="list-group-item">
+                    <span *ngFor="let f of filteredFiles" class="list-group-item">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">
                                 <div class="form-check form-switch form-check-secondary">
