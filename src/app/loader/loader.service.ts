@@ -115,11 +115,12 @@ export class LoaderService {
     }
   }
 
-  loadFiles(): void {
+  loadFiles(filesToLoad?: DataFile[]): void {
     this.stateSubject.next('loading');
     this.addMessage({ type: 'info', body: 'Starting load operations...', date: new Date() });
 
-    const filtered = this.currentFiles.filter(f => f.load);
+    const files = filesToLoad || this.currentFiles;
+    const filtered = files.filter(f => f.load);
     console.log('Loading ' + filtered.length + ' files...');
     this.loadNextFile([...filtered]);
   }

@@ -148,7 +148,7 @@ export class LoaderComponent implements OnInit, OnDestroy {
 	}
 
 	load() {
-		this.loaderService.loadFiles();
+		this.loaderService.loadFiles(this.filteredFiles);
 	}
 
 	toggleSelected() {
