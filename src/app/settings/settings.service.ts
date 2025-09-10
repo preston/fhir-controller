@@ -6,8 +6,8 @@ import { Settings, ThemeType } from './settings';
 @Injectable()
 export class SettingsService implements OnInit {
 
-  public static SETTINGS_KEY: string = "skycapp_marketplace_settings";
-  public static FORCE_RESET_KEY: string = "skycapp_marketplace_settings_force_reset";
+  public static SETTINGS_KEY: string = "fhir_controller_settings";
+  public static FORCE_RESET_KEY: string = "fhir_controller_settings_force_reset";
 
   public settings: Settings = new Settings;
   public force_reset: boolean = false;
