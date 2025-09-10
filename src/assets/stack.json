@@ -110,6 +110,7 @@
             "type": "Patient Bundle",
             "priority": 7
         },
+
         {
             "file": "data/example/cql/HelloWorld.cql",
             "load": true,
@@ -117,7 +118,7 @@
             "name": "HelloWorld CQL Library",
             "description": "CQL example 'Hello World' library for testing purposes.",
             "type": "CQL Library",
-            "priority": 8,
+            "priority": 9,
             "scenarios": [
                 "default",
                 "partial"

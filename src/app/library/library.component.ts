@@ -1,8 +1,9 @@
 // Author: Preston Lee
 
 import { Component, OnChanges, SimpleChanges } from '@angular/core';
-import { Library, Bundle } from 'fhir/r4';
+import { Library, Bundle, Patient, Parameters } from 'fhir/r4';
 import { LibraryService } from '../library.service';
+import { PatientService } from '../patient.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -33,12 +34,27 @@ export class LibraryComponent implements OnChanges {
 	public showSearchResults: boolean = false;
 	private searchSubject = new Subject<string>();
 
+	// Patient search functionality
+	public patientSearchTerm: string = "";
+	public patientSearchResults: Patient[] = [];
+	public isSearchingPatients: boolean = false;
+	public showPatientSearchResults: boolean = false;
+	private patientSearchSubject = new Subject<string>();
+
 	// Library state tracking
 	public isNewLibrary: boolean = false;
 	public hasSelectedLibrary: boolean = false;
 
+	// Patient state tracking
+	public hasSelectedPatient: boolean = false;
+
+	// Evaluation results
+	public evaluationResults: Parameters | null = null;
+	public isEvaluating: boolean = false;
+
 	constructor(
 		protected libraryService: LibraryService,
+		protected patientService: PatientService,
 		protected toastrService: ToastrService) {
 		// this.libraryService.libraryId = LibraryService.DEFAULT_LIBRARY_ID;
 		console.log('LibraryComponent initialized');
@@ -47,7 +63,7 @@ export class LibraryComponent implements OnChanges {
 
 		// Set up live search with debouncing
 		this.searchSubject.pipe(
-			debounceTime(100), // Wait 300ms after user stops typing
+			debounceTime(100), // Wait 100ms after user stops typing
 			distinctUntilChanged(), // Only emit if the value has changed
 			switchMap(searchTerm => {
 				if (searchTerm.trim()) {
@@ -75,6 +91,39 @@ export class LibraryComponent implements OnChanges {
 				this.isSearching = false;
 				console.error('Error searching libraries:', error);
 				this.toastrService.error('Failed to search libraries. Please check your connection.', 'Search Error');
+			}
+		});
+
+		// Set up patient search with debouncing
+		this.patientSearchSubject.pipe(
+			debounceTime(100), // Wait 100ms after user stops typing
+			distinctUntilChanged(), // Only emit if the value has changed
+			switchMap(searchTerm => {
+				if (searchTerm.trim()) {
+					this.isSearchingPatients = true;
+					return this.patientService.search(searchTerm);
+				} else {
+					this.isSearchingPatients = false;
+					this.showPatientSearchResults = false;
+					this.patientSearchResults = [];
+					return [];
+				}
+			})
+		).subscribe({
+			next: (bundle: Bundle<Patient>) => {
+				this.isSearchingPatients = false;
+				if (bundle.entry && bundle.entry.length > 0) {
+					this.patientSearchResults = bundle.entry.map(entry => entry.resource!);
+					this.showPatientSearchResults = true;
+				} else if (this.patientSearchTerm.trim()) {
+					this.patientSearchResults = [];
+					this.showPatientSearchResults = true;
+				}
+			},
+			error: (error: any) => {
+				this.isSearchingPatients = false;
+				console.error('Error searching patients:', error);
+				this.toastrService.error('Failed to search patients. Please check your connection.', 'Patient Search Error');
 			}
 		});
 	}
@@ -344,6 +393,106 @@ export class LibraryComponent implements OnChanges {
 			this.libraryDescription?.trim() &&
 			this.cql?.trim()
 		);
+	}
+
+	// Patient search functionality methods
+	onPatientSearchInput(event: any) {
+		const searchTerm = event.target.value;
+		this.patientSearchTerm = searchTerm;
+		this.patientSearchSubject.next(searchTerm);
+	}
+
+	selectPatient(patient: Patient) {
+		if (patient.id) {
+			this.patientService.selectedPatient = patient;
+			this.showPatientSearchResults = false;
+			this.patientSearchTerm = "";
+			this.patientSearchResults = [];
+			this.hasSelectedPatient = true;
+			this.toastrService.success(`Selected patient: ${this.getPatientDisplayName(patient)}`, 'Patient Selected');
+		}
+	}
+
+	clearPatientSearch() {
+		this.patientSearchTerm = "";
+		this.patientSearchResults = [];
+		this.showPatientSearchResults = false;
+		this.isSearchingPatients = false;
+		this.patientSearchSubject.next(""); // Clear any pending searches
+	}
+
+	clearPatientSelection() {
+		this.patientService.clearSelection();
+		this.hasSelectedPatient = false;
+		this.clearPatientSearch();
+		this.evaluationResults = null; // Clear evaluation results when patient is cleared
+		this.toastrService.info("Patient selection cleared.", "Patient Cleared");
+	}
+
+	getPatientDisplayName(patient: Patient): string {
+		if (patient.name && patient.name.length > 0) {
+			const name = patient.name[0];
+			const given = name.given ? name.given.join(' ') : '';
+			const family = name.family || '';
+			return `${given} ${family}`.trim() || patient.id || 'Unknown';
+		}
+		return patient.id || 'Unknown';
+	}
+
+	// Evaluation functionality
+	canEvaluate(): boolean {
+		return this.hasSelectedLibrary && this.hasSelectedPatient && !this.isNewLibrary;
+	}
+
+	// Check if we can show evaluation-related UI elements
+	canShowEvaluationUI(): boolean {
+		return this.hasSelectedLibrary && this.hasSelectedPatient;
+	}
+
+	evaluateLibrary() {
+		if (!this.canEvaluate()) {
+			this.toastrService.error('Please select both a library and a patient before evaluating.', 'Evaluation Error');
+			return;
+		}
+
+		if (!this.libraryService.libraryId || !this.patientService.selectedPatient?.id) {
+			this.toastrService.error('Missing library ID or patient ID for evaluation.', 'Evaluation Error');
+			return;
+		}
+
+		this.isEvaluating = true;
+		this.evaluationResults = null;
+
+		// Create parameters for evaluation with patient context
+		const parameters: Parameters = {
+			resourceType: 'Parameters',
+			parameter: [
+				{
+					name: 'subject',
+					valueString: `Patient/${this.patientService.selectedPatient.id}`
+				}
+			]
+		};
+
+		this.libraryService.evaluate(
+			this.libraryService.libraryId,
+			parameters
+		).subscribe({
+			next: (results: Parameters) => {
+				this.isEvaluating = false;
+				this.evaluationResults = results;
+				this.toastrService.success('Library evaluation completed successfully!', 'Evaluation Complete');
+			},
+			error: (error: any) => {
+				this.isEvaluating = false;
+				console.error('Error evaluating library:', error);
+				this.toastrService.error('Failed to evaluate library. Please check the server logs for more details.', 'Evaluation Failed');
+			}
+		});
+	}
+
+	evaluationResultsAsString(): string {
+		return this.evaluationResults ? JSON.stringify(this.evaluationResults, null, 2) : '';
 	}
 
 }
