@@ -1,11 +1,12 @@
 # FHIR Controller :: Application Stack Data Loader and Utility UI
 
-This base image, intended to be directly extended with your own data files, provides a simple web UI for bootstrapping a freshly booted FHIR server by:
+[![Build Status](https://ci.prestonlee.com/api/badges/preston/fhir-controller/status.svg)](https://ci.prestonlee.com/preston/fhir-controller)
 
-1. Presenting your Markdown-formatted instructions or tutorial. 
-1. Loading a preset sequence of FHIR bundles to a given FHIR server in order.
-1. Providing ordered resource links to guide the user through initial usage.
-1. Deleting of all records en masse, if supported by the server driver. Currently this is supported by the HAPI and WildFHIR drivers that use non-standard operations.
+FHIR Controller is a base standalone web application image providing a simple web UI for bootstrapping a freshly booted FHIR server. Just drop your FHIR data bundles and CQL files into a child project and extend the [base Docker image](https://hub.docker.com/r/p3000/fhir-controller/tags). You'll get:
+
+1. An HTML rendering of your Markdown-formatted instructions or tutorial and supplemental links.
+2. Data loader utility for seeding your FHIR Bundles and CQL files in sequence to a default FHIR base URL.
+3. Server reset button for restoring the server to a default state, if supported by the server. Deletion of all records en masse is not a standard FHIR operation and requires the server driver support to support it: currently HAPI and WildFHIR drivers.
 
 The stack controller operates purely in-browser and makes all FHIR API calls via REST. There are no other server-side API calls.
 
