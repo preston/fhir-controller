@@ -10,6 +10,13 @@
             "url": "http://localhost:8080"
         }
     ],
+    "scenarios": [
+        {
+            "id": "partial",
+            "name": "Partial",
+            "description": "Small data set with the same CQL"
+        }
+    ],
     "data": [
         {
             "file": "data/example/fhir/hospitalInformation1671557337568.json",
@@ -18,7 +25,11 @@
             "name": "Organization Bundle 1",
             "description": "Synthea-generated Organization records",
             "type": "Organization Bundle",
-            "priority": 0
+            "priority": 0,
+            "scenarios": [
+                "default",
+                "partial"
+            ]
         },
         {
             "file": "data/example/fhir/hospitalInformation1671557444542.json",
@@ -27,7 +38,11 @@
             "name": "Organization Bundle 2",
             "description": "Synthea-generated Organization records",
             "type": "Organization Bundle",
-            "priority": 1
+            "priority": 1,
+            "scenarios": [
+                "default",
+                "partial"
+            ]
         },
         {
             "file": "data/example/fhir/practitionerInformation1671557337568.json",
@@ -36,7 +51,11 @@
             "name": "Practioner Bundle 1",
             "description": "Synthea-generated Practitioner records",
             "type": "Practitioner Bundle",
-            "priority": 2
+            "priority": 2,
+            "scenarios": [
+                "default",
+                "partial"
+            ]
         },
         {
             "file": "data/example/fhir/practitionerInformation1671557444542.json",
@@ -45,7 +64,11 @@
             "name": "Practioner Bundle2 ",
             "description": "Synthea-generated Practitioner records",
             "type": "Practitioner Bundle",
-            "priority": 3
+            "priority": 3,
+            "scenarios": [
+                "default",
+                "partial"
+            ]
         },
         {
             "file": "data/example/fhir/Patient 1 - Adrian Allen1.json",
@@ -54,7 +77,11 @@
             "name": "Patient 1 - Adrian Allen1",
             "description": "Deidentified patient record from SHARES study.",
             "type": "Patient Bundle",
-            "priority": 4
+            "priority": 4,
+            "scenarios": [
+                "default",
+                "partial"
+            ]
         },
         {
             "file": "data/example/fhir/Patient 2 - Beth Brooks2.json",
@@ -91,6 +118,10 @@
             "description": "CQL example 'Hello World' library for testing purposes.",
             "type": "CQL Library",
             "priority": 8,
+            "scenarios": [
+                "default",
+                "partial"
+            ],
             "evaluate": {
                 "id": "HelloWorld",
                 "subjects": [
