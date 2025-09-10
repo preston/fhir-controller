@@ -22,12 +22,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center" [routerLink]="['/settings']" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">
-                        <i class="me-1 bi bi-gear"></i>
-                        Settings
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link d-flex align-items-center" [routerLink]="['/libraries']" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">
                         <i class="me-1 bi bi-braces"></i>
                         CQL Libraries
@@ -36,26 +30,14 @@
             </ul>
 
             <!-- Right side items -->
-            <!-- <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle me-1"></i>
-                        User
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" [routerLink]="['/settings']" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">
+                        <i class="me-1 bi bi-gear"></i>
+                        Settings
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" [routerLink]="['/settings']"><i
-                                    class="bi bi-gear me-2"></i>Settings</a>
-
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                    </ul>
                 </li>
-            </ul> -->
+            </ul>
         </div>
     </div>
 </nav>
