@@ -1,4 +1,4 @@
-# FHIR Controller :: Application Stack Data Loader and Utility UI
+# FHIR Controller :: Data Loading, CQL Explorer and Utility UI
 
 [![Build Status](https://ci.prestonlee.com/api/badges/preston/fhir-controller/status.svg)](https://ci.prestonlee.com/preston/fhir-controller)
 

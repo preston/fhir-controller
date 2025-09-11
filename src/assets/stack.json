@@ -144,6 +144,41 @@
                     }
                 ]
             }
+        },
+
+        {
+            "file": "data/example/cql/Basic-Statin-Artifact.cql",
+            "load": true,
+            "loader": "cql-as-fhir-library",
+            "name": "Basic Statin Artifact CQL Library",
+            "description": "CQL library for testing purposes.",
+            "type": "CQL Library",
+            "priority": 10,
+            "scenarios": [
+                "default",
+                "partial"
+            ],
+            "evaluate": {
+                "id": "Basic-Statin-Artifact",
+                "subjects": [
+                    {
+                        "id": "cfsb1703736930464",
+                        "name": "Adrian Allen"
+                    },
+                    {
+                        "id": "cfsb1699034947598",
+                        "name": "Beth Brooks"
+                    },
+                    {
+                        "id": "cfsb1700025838491",
+                        "name": "Carmen Chavez"
+                    },
+                    {
+                        "id": "cfsb1700154185275",
+                        "name": "Diana Dixon"
+                    }
+                ]
+            }
         }
     ]
 }

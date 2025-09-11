@@ -1,3 +1,28 @@
+<style>
+  /* Fix for form-floating select dropdown text cropping */
+  .form-floating .form-select {
+    z-index: 2;
+  }
+  
+  .form-floating .form-select:focus {
+    z-index: 3;
+  }
+  
+  .form-floating .form-select:not(:placeholder-shown) {
+    z-index: 3;
+  }
+  
+  /* Ensure dropdown options appear above the floating label */
+  .form-floating .form-select option {
+    z-index: 4;
+  }
+  
+  /* Additional fix for better dropdown visibility */
+  .form-floating .form-select:focus ~ label {
+    z-index: 1;
+  }
+</style>
+
 <div class="container py-4">
   <div class="row">
     <div class="col-12">
@@ -55,30 +80,35 @@
 
             <div class="row mb-3">
               <div class="col-md-6">
-                <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="title"
-                  formControlName="title"
-                  [class.is-invalid]="configurationForm.get('title')?.invalid && configurationForm.get('title')?.touched"
-                  placeholder="Enter configuration title">
+                <div class="form-floating">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="title"
+                    formControlName="title"
+                    [class.is-invalid]="configurationForm.get('title')?.invalid && configurationForm.get('title')?.touched"
+                    placeholder="Enter configuration title">
+                  <label for="title">Title <span class="text-danger">*</span></label>
+                </div>
                 <div *ngIf="configurationForm.get('title')?.invalid && configurationForm.get('title')?.touched" class="invalid-feedback">
                   Title is required and must be at least 1 character long.
                 </div>
               </div>
               <div class="col-md-6">
-                <label for="driver" class="form-label">Driver Type <span class="text-danger">*</span></label>
-                <select 
-                  class="form-select" 
-                  id="driver"
-                  formControlName="driver"
-                  [class.is-invalid]="configurationForm.get('driver')?.invalid && configurationForm.get('driver')?.touched">
-                  <option [value]="DriverType.Generic">Generic</option>
-                  <option [value]="DriverType.Hapi">HAPI FHIR</option>
-                  <option [value]="DriverType.WildFHIR">WildFHIR</option>
-                  <option [value]="DriverType.FHIRCandle">FHIR Candle</option>
-                </select>
+                <div class="form-floating">
+                  <select 
+                    class="form-select" 
+                    id="driver"
+                    formControlName="driver"
+                    [class.is-invalid]="configurationForm.get('driver')?.invalid && configurationForm.get('driver')?.touched">
+                    <option value="" disabled>Select driver type</option>
+                    <option [value]="DriverType.Generic">Generic</option>
+                    <option [value]="DriverType.Hapi">HAPI FHIR</option>
+                    <option [value]="DriverType.WildFHIR">WildFHIR</option>
+                    <option [value]="DriverType.FHIRCandle">FHIR Candle</option>
+                  </select>
+                  <label for="driver">Driver Type <span class="text-danger">*</span></label>
+                </div>
                 <div *ngIf="configurationForm.get('driver')?.invalid && configurationForm.get('driver')?.touched" class="invalid-feedback">
                   Please select a driver type.
                 </div>
@@ -86,17 +116,21 @@
             </div>
 
             <div class="row mb-3">
-                <label for="fhir_base_url" class="form-label">FHIR Base URL <span class="text-danger">*</span></label>
-                <input 
-                  type="url" 
-                  class="form-control" 
-                  id="fhir_base_url"
-                  formControlName="fhir_base_url"
-                  [class.is-invalid]="configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched"
-                  placeholder="https://your-fhir-server.com/fhir">
+              <div class="col-12">
+                <div class="form-floating">
+                  <input 
+                    type="url" 
+                    class="form-control" 
+                    id="fhir_base_url"
+                    formControlName="fhir_base_url"
+                    [class.is-invalid]="configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched"
+                    placeholder="https://your-fhir-server.com/fhir">
+                  <label for="fhir_base_url">FHIR Base URL <span class="text-danger">*</span></label>
+                </div>
                 <div *ngIf="configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched" class="invalid-feedback">
                   Please enter a valid HTTP/HTTPS URL.
                 </div>
+              </div>
             </div>
 
             <div class="row mb-3">
@@ -111,13 +145,16 @@
                         Editor
                       </small>
                     </div>
-                    <textarea 
-                      class="form-control" 
-                      id="instructions"
-                      formControlName="instructions"
-                      [class.is-invalid]="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched"
-                      rows="6"
-                      placeholder="Enter user instructions in markdown format..."></textarea>
+                    <div class="form-floating">
+                      <textarea 
+                        class="form-control" 
+                        id="instructions"
+                        formControlName="instructions"
+                        [class.is-invalid]="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched"
+                        style="height: 150px;"
+                        placeholder="Enter user instructions in markdown format..."></textarea>
+                      <label for="instructions">Instructions <span class="text-danger">*</span></label>
+                    </div>
                     <div *ngIf="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched" class="invalid-feedback">
                       Instructions are required.
                     </div>
@@ -183,7 +220,7 @@
                  (dragover)="onDragOver($event)" 
                  (drop)="onDrop($event)">
               <div *ngFor="let dataFile of dataFiles.controls; let i = index" 
-                   class="border rounded p-3 mb-3 bg-light draggable-item"
+                   class="border rounded p-4 mb-3 draggable-item"
                    [attr.data-index]="i"
                    draggable="true"
                    (dragstart)="onDragStart($event, i)"
@@ -202,40 +239,47 @@
                 <div [formGroupName]="i">
                   <div class="row mb-3">
                     <div class="col-md-6">
-                      <label [for]="'file_' + i" class="form-label">File Path <span class="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [id]="'file_' + i"
-                        formControlName="file"
-                        [class.is-invalid]="dataFile.get('file')?.invalid && dataFile.get('file')?.touched"
-                        placeholder="data/example/patient.json">
+                      <div class="form-floating">
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          [id]="'file_' + i"
+                          formControlName="file"
+                          [class.is-invalid]="dataFile.get('file')?.invalid && dataFile.get('file')?.touched"
+                          placeholder="data/example/patient.json">
+                        <label [for]="'file_' + i">File Path <span class="text-danger">*</span></label>
+                      </div>
                       <div *ngIf="dataFile.get('file')?.invalid && dataFile.get('file')?.touched" class="invalid-feedback">
                         File path is required.
                       </div>
                     </div>
                     <div class="col-md-3">
-                      <label [for]="'name_' + i" class="form-label">Name <span class="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [id]="'name_' + i"
-                        formControlName="name"
-                        [class.is-invalid]="dataFile.get('name')?.invalid && dataFile.get('name')?.touched"
-                        placeholder="Patient Data">
+                      <div class="form-floating">
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          [id]="'name_' + i"
+                          formControlName="name"
+                          [class.is-invalid]="dataFile.get('name')?.invalid && dataFile.get('name')?.touched"
+                          placeholder="Patient Data">
+                        <label [for]="'name_' + i">Name <span class="text-danger">*</span></label>
+                      </div>
                       <div *ngIf="dataFile.get('name')?.invalid && dataFile.get('name')?.touched" class="invalid-feedback">
                         Name is required.
                       </div>
                     </div>
                     <div class="col-md-3">
-                      <label [for]="'priority_' + i" class="form-label">Priority</label>
-                      <input 
-                        type="number" 
-                        class="form-control" 
-                        [id]="'priority_' + i"
-                        formControlName="priority"
-                        [class.is-invalid]="dataFile.get('priority')?.invalid && dataFile.get('priority')?.touched"
-                        min="1">
+                      <div class="form-floating">
+                        <input 
+                          type="number" 
+                          class="form-control" 
+                          [id]="'priority_' + i"
+                          formControlName="priority"
+                          [class.is-invalid]="dataFile.get('priority')?.invalid && dataFile.get('priority')?.touched"
+                          min="1"
+                          placeholder="1">
+                        <label [for]="'priority_' + i">Priority</label>
+                      </div>
                       <div *ngIf="dataFile.get('priority')?.invalid && dataFile.get('priority')?.touched" class="invalid-feedback">
                         Priority must be at least 1.
                       </div>
@@ -244,42 +288,49 @@
 
                   <div class="row mb-3">
                     <div class="col-md-6">
-                      <label [for]="'description_' + i" class="form-label">Description <span class="text-danger">*</span></label>
-                      <textarea 
-                        class="form-control" 
-                        [id]="'description_' + i"
-                        formControlName="description"
-                        [class.is-invalid]="dataFile.get('description')?.invalid && dataFile.get('description')?.touched"
-                        rows="2"
-                        placeholder="Description of the data file..."></textarea>
+                      <div class="form-floating">
+                        <textarea 
+                          class="form-control" 
+                          [id]="'description_' + i"
+                          formControlName="description"
+                          [class.is-invalid]="dataFile.get('description')?.invalid && dataFile.get('description')?.touched"
+                          style="height: 80px;"
+                          placeholder="Description of the data file..."></textarea>
+                        <label [for]="'description_' + i">Description <span class="text-danger">*</span></label>
+                      </div>
                       <div *ngIf="dataFile.get('description')?.invalid && dataFile.get('description')?.touched" class="invalid-feedback">
                         Description is required.
                       </div>
                     </div>
                     <div class="col-md-3">
-                      <label [for]="'type_' + i" class="form-label">Type <span class="text-danger">*</span></label>
-                      <input 
-                        type="text" 
-                        class="form-control" 
-                        [id]="'type_' + i"
-                        formControlName="type"
-                        [class.is-invalid]="dataFile.get('type')?.invalid && dataFile.get('type')?.touched"
-                        placeholder="Patient">
+                      <div class="form-floating">
+                        <input 
+                          type="text" 
+                          class="form-control" 
+                          [id]="'type_' + i"
+                          formControlName="type"
+                          [class.is-invalid]="dataFile.get('type')?.invalid && dataFile.get('type')?.touched"
+                          placeholder="Patient">
+                        <label [for]="'type_' + i">Type <span class="text-danger">*</span></label>
+                      </div>
                       <div *ngIf="dataFile.get('type')?.invalid && dataFile.get('type')?.touched" class="invalid-feedback">
                         Type is required.
                       </div>
                     </div>
                     <div class="col-md-3">
-                      <label [for]="'loader_' + i" class="form-label">Loader Type <span class="text-danger">*</span></label>
-                      <select 
-                        class="form-select" 
-                        [id]="'loader_' + i"
-                        formControlName="loader"
-                        [class.is-invalid]="dataFile.get('loader')?.invalid && dataFile.get('loader')?.touched"
-                        (change)="onDataFileLoaderChange(i)">
-                        <option [value]="LoaderType.FHIR_BUNDLE">FHIR Bundle</option>
-                        <option [value]="LoaderType.CQL_AS_FHIR_LIBRARY">CQL as FHIR Library</option>
-                      </select>
+                      <div class="form-floating">
+                        <select 
+                          class="form-select" 
+                          [id]="'loader_' + i"
+                          formControlName="loader"
+                          [class.is-invalid]="dataFile.get('loader')?.invalid && dataFile.get('loader')?.touched"
+                          (change)="onDataFileLoaderChange(i)">
+                          <option value="" disabled>Select loader type</option>
+                          <option [value]="LoaderType.FHIR_BUNDLE">FHIR Bundle</option>
+                          <option [value]="LoaderType.CQL_AS_FHIR_LIBRARY">CQL as FHIR Library</option>
+                        </select>
+                        <label [for]="'loader_' + i">Loader Type <span class="text-danger">*</span></label>
+                      </div>
                       <div *ngIf="dataFile.get('loader')?.invalid && dataFile.get('loader')?.touched" class="invalid-feedback">
                         Please select a loader type.
                       </div>
@@ -308,14 +359,16 @@
                       <div formGroupName="evaluate">
                         <div class="row mb-3">
                           <div class="col-md-6">
-                            <label [for]="'evaluate_id_' + i" class="form-label">Library ID <span class="text-danger">*</span></label>
-                            <input 
-                              type="text" 
-                              class="form-control" 
-                              [id]="'evaluate_id_' + i"
-                              formControlName="id"
-                              [class.is-invalid]="dataFile.get('evaluate.id')?.invalid && dataFile.get('evaluate.id')?.touched"
-                              placeholder="Library ID for evaluation">
+                            <div class="form-floating">
+                              <input 
+                                type="text" 
+                                class="form-control" 
+                                [id]="'evaluate_id_' + i"
+                                formControlName="id"
+                                [class.is-invalid]="dataFile.get('evaluate.id')?.invalid && dataFile.get('evaluate.id')?.touched"
+                                placeholder="Library ID for evaluation">
+                              <label [for]="'evaluate_id_' + i">Library ID <span class="text-danger">*</span></label>
+                            </div>
                             <div *ngIf="dataFile.get('evaluate.id')?.invalid && dataFile.get('evaluate.id')?.touched" class="invalid-feedback">
                               Library ID is required for CQL libraries.
                             </div>
@@ -334,20 +387,26 @@
                             <div formArrayName="subjects">
                               <div *ngFor="let subject of getSubjectsArray(dataFile.get('evaluate'))?.controls || []; let j = index" class="row mb-2" [formGroupName]="j">
                                 <div class="col-md-5">
-                                  <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    formControlName="id"
-                                    [id]="'subject_id_' + i + '_' + j"
-                                    placeholder="Subject ID">
+                                  <div class="form-floating">
+                                    <input 
+                                      type="text" 
+                                      class="form-control" 
+                                      formControlName="id"
+                                      [id]="'subject_id_' + i + '_' + j"
+                                      placeholder="Subject ID">
+                                    <label [for]="'subject_id_' + i + '_' + j">Subject ID</label>
+                                  </div>
                                 </div>
                                 <div class="col-md-5">
-                                  <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    formControlName="name"
-                                    [id]="'subject_name_' + i + '_' + j"
-                                    placeholder="Subject Name">
+                                  <div class="form-floating">
+                                    <input 
+                                      type="text" 
+                                      class="form-control" 
+                                      formControlName="name"
+                                      [id]="'subject_name_' + i + '_' + j"
+                                      placeholder="Subject Name">
+                                    <label [for]="'subject_name_' + i + '_' + j">Subject Name</label>
+                                  </div>
                                 </div>
                                 <div class="col-md-2">
                                   <button type="button" class="btn btn-outline-danger btn-sm w-100" (click)="removeSubject(dataFile.get('evaluate')!, j)">
@@ -382,27 +441,31 @@
               <div *ngFor="let link of links.controls; let i = index" class="border rounded p-3 mb-3 bg-light" [formGroupName]="i">
                 <div class="row">
                   <div class="col-md-5">
-                    <label [for]="'link_name_' + i" class="form-label">Link Name <span class="text-danger">*</span></label>
-                    <input 
-                      type="text" 
-                      class="form-control" 
-                      [id]="'link_name_' + i"
-                      formControlName="name"
-                      [class.is-invalid]="link.get('name')?.invalid && link.get('name')?.touched"
-                      placeholder="Documentation">
+                    <div class="form-floating">
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        [id]="'link_name_' + i"
+                        formControlName="name"
+                        [class.is-invalid]="link.get('name')?.invalid && link.get('name')?.touched"
+                        placeholder="Documentation">
+                      <label [for]="'link_name_' + i">Link Name <span class="text-danger">*</span></label>
+                    </div>
                     <div *ngIf="link.get('name')?.invalid && link.get('name')?.touched" class="invalid-feedback">
                       Link name is required.
                     </div>
                   </div>
                   <div class="col-md-5">
-                    <label [for]="'link_url_' + i" class="form-label">URL <span class="text-danger">*</span></label>
-                    <input 
-                      type="url" 
-                      class="form-control" 
-                      [id]="'link_url_' + i"
-                      formControlName="url"
-                      [class.is-invalid]="link.get('url')?.invalid && link.get('url')?.touched"
-                      placeholder="https://example.com">
+                    <div class="form-floating">
+                      <input 
+                        type="url" 
+                        class="form-control" 
+                        [id]="'link_url_' + i"
+                        formControlName="url"
+                        [class.is-invalid]="link.get('url')?.invalid && link.get('url')?.touched"
+                        placeholder="https://example.com">
+                      <label [for]="'link_url_' + i">URL <span class="text-danger">*</span></label>
+                    </div>
                     <div *ngIf="link.get('url')?.invalid && link.get('url')?.touched" class="invalid-feedback">
                       Please enter a valid HTTP/HTTPS URL.
                     </div>

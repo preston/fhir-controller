@@ -222,7 +222,7 @@ export class LoaderService {
   }
 
   private extractCqlLibraryNameAndVersion(content: string) {
-    const libraryRegex = /^library\s+(\w+)\s+version\s+'([^']+)'/m;
+    const libraryRegex = /^library\s+"?([\w-]+)"?\s+version\s+'([^']+)'/m;
     const match = content.match(libraryRegex);
     if (match) {
       const libraryName = match[1];
