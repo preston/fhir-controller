@@ -1,11 +1,9 @@
 // Author: Preston Lee
 
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { LoaderService } from '../loader/loader.service';
-import { StackConfiguration } from '../loader/stack_configuration';
 
 declare var bootstrap: any;
 
@@ -16,7 +14,7 @@ declare var bootstrap: any;
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss'
 })
-export class NavigationComponent implements OnInit, OnDestroy, AfterViewInit {
+export class NavigationComponent implements AfterViewInit {
   // title = 'FHIR Controller';
   // configuration: StackConfiguration | null = null;
   
@@ -28,16 +26,10 @@ export class NavigationComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   isCollapsed = true;
-  private subscriptions: Subscription[] = [];
+  protected loaderService = inject(LoaderService);
 
-  constructor(protected loaderService: LoaderService) {}
-
-  ngOnInit() {
-    // Subscribe to configuration changes to update the title
-    this.subscriptions.push(
-      this.loaderService.configuration$.subscribe(config => {
-      })
-    );
+  constructor() {
+    // No subscriptions needed - configuration is handled by other components
   }
 
   ngAfterViewInit() {
@@ -48,10 +40,6 @@ export class NavigationComponent implements OnInit, OnDestroy, AfterViewInit {
         return new bootstrap.Dropdown(dropdownToggleEl);
       });
     }
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   toggleNavbar() {

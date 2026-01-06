@@ -9,17 +9,17 @@
                 </div>
 
                 <!-- Library Search -->
-                @if (!hasSelectedLibrary) {
+                @if (!hasSelectedLibrary()) {
                   <div>
                     <div class="input-group mb-3">
-                        <input id="searchTerm" class="form-control" type="text" [(ngModel)]="searchTerm"
+                        <input id="searchTerm" class="form-control" type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
                             placeholder="Type to search libraries..." (input)="onSearchInput($event)" autofocus>
-                        @if (isSearching) {
+                        @if (isSearching()) {
                           <span class="input-group-text">
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                           </span>
                         }
-                        @if (searchTerm || showSearchResults) {
+                        @if (searchTerm() || showSearchResults()) {
                           <button class="btn btn-outline-secondary" (click)="clearSearch()">
                             <span class="bi bi-x"></span> Clear
                           </button>
@@ -27,11 +27,11 @@
                     </div>
 
                     <!-- Library Search Results -->
-                    @if (showSearchResults) {
+                    @if (showSearchResults()) {
                       <div>
-                        @if (searchResults.length > 0) {
+                        @if (searchResults().length > 0) {
                           <div class="list-group">
-                            @for (library of searchResults; track library.id) {
+                            @for (library of searchResults(); track library.id) {
                               <button
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                                 (click)="selectLibrary(library)">
@@ -48,10 +48,11 @@
                                 </div>
                                 <span class="bi bi-arrow-right"></span>
                               </button>
+                            } @empty {
+                              <div class="list-group-item">No libraries found</div>
                             }
                           </div>
-                        }
-                        @if (searchResults.length === 0) {
+                        } @else {
                           <div class="alert alert-info">
                             No libraries found matching your search criteria.
                           </div>
@@ -69,7 +70,7 @@
 
 
                 <!-- Selected Library Display -->
-                @if (hasSelectedLibrary) {
+                @if (hasSelectedLibrary()) {
                   <div class="alert alert-success">
                     <div>
                         <strong><span class="bi bi-braces"></span> Selected Library:</strong>
@@ -81,7 +82,7 @@
                               <span> | {{ libraryDescription }}</span>
                             }
                         </small>
-                        @if (!hasSelectedPatient) {
+                        @if (!hasSelectedPatient()) {
                           <div class="mt-2">
                             <small class="text-muted">
                                 <span class="bi bi-info-circle"></span> 
@@ -94,7 +95,7 @@
                 }
 
                 <!-- Action Buttons - When library is selected -->
-                @if (hasSelectedLibrary) {
+                @if (hasSelectedLibrary()) {
                   <div class="mb-3">
                     <div class="btn-group" role="group">
                         <button class="btn btn-primary" (click)="createNewLibrary()">
@@ -116,17 +117,17 @@
                 </div>
 
                 <!-- Patient Search -->
-                @if (!hasSelectedPatient) {
+                @if (!hasSelectedPatient()) {
                   <div>
                     <div class="input-group mb-3">
-                        <input id="patientSearchTerm" class="form-control" type="text" [(ngModel)]="patientSearchTerm"
+                        <input id="patientSearchTerm" class="form-control" type="text" [ngModel]="patientSearchTerm()" (ngModelChange)="patientSearchTerm.set($event)"
                             placeholder="Type to search patients..." (input)="onPatientSearchInput($event)">
-                        @if (isSearchingPatients) {
+                        @if (isSearchingPatients()) {
                           <span class="input-group-text">
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                           </span>
                         }
-                        @if (patientSearchTerm || showPatientSearchResults) {
+                        @if (patientSearchTerm() || showPatientSearchResults()) {
                           <button class="btn btn-outline-secondary" (click)="clearPatientSearch()">
                             <span class="bi bi-x"></span> Clear
                           </button>
@@ -134,11 +135,11 @@
                     </div>
 
                     <!-- Patient Search Results -->
-                    @if (showPatientSearchResults) {
+                    @if (showPatientSearchResults()) {
                       <div>
-                        @if (patientSearchResults.length > 0) {
+                        @if (patientSearchResults().length > 0) {
                           <div class="list-group">
-                            @for (patient of patientSearchResults; track patient.id) {
+                            @for (patient of patientSearchResults(); track patient.id) {
                               <button
                                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                                 (click)="selectPatient(patient)">
@@ -157,10 +158,11 @@
                                 </div>
                                 <span class="bi bi-arrow-right"></span>
                               </button>
+                            } @empty {
+                              <div class="list-group-item">No patients found</div>
                             }
                           </div>
-                        }
-                        @if (patientSearchResults.length === 0) {
+                        } @else {
                           <div class="alert alert-info">
                             No patients found matching your search criteria.
                           </div>
@@ -171,7 +173,7 @@
                 }
 
                 <!-- Selected Patient Display -->
-                @if (hasSelectedPatient) {
+                @if (hasSelectedPatient()) {
                   <div class="alert alert-success">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -187,7 +189,7 @@
                                   <span> | DOB: {{ patientService.selectedPatient!.birthDate }}</span>
                                 }
                             </small>
-                            @if (!hasSelectedLibrary) {
+                            @if (!hasSelectedLibrary()) {
                               <div class="mt-2">
                                 <small class="text-muted">
                                     <span class="bi bi-info-circle"></span> 
@@ -202,7 +204,7 @@
                     </div>
                   </div>
                 }
-                @if (hasSelectedPatient) {
+                @if (hasSelectedPatient()) {
                   <button class="btn btn-outline-danger" (click)="clearPatientSelection()">
                     <span class="bi bi-x"></span> Clear Patient
                   </button>
@@ -214,12 +216,12 @@
 
 
     <!-- Library Sandbox Section - Only show when a library is selected -->
-    @if (hasSelectedLibrary) {
+    @if (hasSelectedLibrary()) {
       <section id="library-sandbox">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">
                 <span class="bi bi-braces"></span> 
-                {{ isNewLibrary ? 'New Library' : 'Library: ' + (libraryService.libraryId || 'Unknown') }}
+                {{ isNewLibrary() ? 'New Library' : 'Library: ' + (libraryService.libraryId || 'Unknown') }}
             </h5>
             <div class="btn-group">
                 <button class="btn btn-outline-danger" (click)="clearSelection()">
@@ -288,12 +290,12 @@
                         <label for="exampleCql"> Example CQL</label>
                     </div>
 
-                    @if (!isNewLibrary) {
+                    @if (!isNewLibrary()) {
                       <button class="btn btn-danger m-2 float-end" (click)="deleteCql()"> 
                         <span class="bi bi-trash"></span> Delete from Server
                       </button>
                     }
-                    @if (!isNewLibrary) {
+                    @if (!isNewLibrary()) {
                       <div class="btn-group m-2 float-end">
                         <button class="btn btn-outline-primary" (click)="reloadLibraryFromServer()"> <span
                                 class="bi bi-arrow-clockwise"></span> Reload From Server</button>
@@ -304,21 +306,21 @@
                     <!-- <br> -->
                     <button class="btn btn-primary m-2" (click)="saveCql()" [disabled]="!isFormValid()"> 
                         <span class="bi bi-upload"></span> 
-                        {{ isNewLibrary ? 'Create Library' : 'Update Library' }}
+                        {{ isNewLibrary() ? 'Create Library' : 'Update Library' }}
                     </button>
                     
                     <!-- Evaluation Button - Only show when both library and patient are selected -->
-                    <!-- @if (canShowEvaluationUI()) {
-                      <button class="btn btn-success m-2" (click)="evaluateLibrary()" [disabled]="!canEvaluate() || isEvaluating"> 
-                        @if (!isEvaluating) {
+                    @if (canShowEvaluationUI()) {
+                      <button class="btn btn-success m-2" (click)="evaluateLibrary()" [disabled]="!canEvaluate() || isEvaluating()"> 
+                        @if (!isEvaluating()) {
                           <span class="bi bi-play-circle"></span>
                         }
-                        @if (isEvaluating) {
+                        @if (isEvaluating()) {
                           <span class="spinner-border spinner-border-sm"></span>
                         }
-                        {{ isEvaluating ? 'Evaluating...' : 'Evaluate Library' }}
+                        {{ isEvaluating() ? 'Evaluating...' : 'Evaluate Library' }}
                       </button>
-                    } -->
+                    }
                 </div>
             </div>
         </div>
@@ -351,12 +353,12 @@
                         <div class="col-12">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h6>Evaluation Results</h6>
-                                <button class="btn btn-outline-primary" (click)="evaluateLibrary()" [disabled]="isEvaluating">
+                                <button class="btn btn-outline-primary" (click)="evaluateLibrary()" [disabled]="isEvaluating()">
                                     <span class="bi bi-arrow-clockwise"></span> Re-evaluate
                                 </button>
                             </div>
                             
-                            @if (isEvaluating) {
+                            @if (isEvaluating()) {
                               <div class="text-center py-4">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Evaluating...</span>
@@ -365,7 +367,7 @@
                               </div>
                             }
                             
-                            @if (!isEvaluating && !evaluationResults) {
+                            @if (!isEvaluating() && !evaluationResults()) {
                               <div class="text-center py-4">
                                 <i class="bi bi-play-circle display-1 text-muted mb-3"></i>
                                 <h5 class="text-muted">No Evaluation Results</h5>
@@ -373,7 +375,7 @@
                               </div>
                             }
                             
-                            @if (!isEvaluating && evaluationResults) {
+                            @if (!isEvaluating() && evaluationResults()) {
                               <div class="border rounded p-3">
                                 <pre class="mb-0"><code [highlight]="evaluationResultsAsString()" language="json"></code></pre>
                               </div>

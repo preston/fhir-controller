@@ -1,9 +1,10 @@
 // Author: Preston Lee
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, effect, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { MarkdownModule } from 'ngx-markdown';
 
@@ -21,12 +22,21 @@ import { LoaderType } from '../loader/loader_type';
   styleUrl: './configuration-editor.component.scss'
 })
 export class ConfigurationEditorComponent implements OnInit, OnDestroy {
+  // Inject services using inject() function
+  private loaderService = inject(LoaderService);
+  private formBuilder = inject(FormBuilder);
+  private toastrService = inject(ToastrService);
+  private destroyRef = inject(DestroyRef);
+
   configurationForm: FormGroup | null = null;
-  private subscription: Subscription = new Subscription();
-  currentConfiguration: StackConfiguration | null = null;
-  validationErrors: string[] = [];
-  isNewConfiguration: boolean = false;
-  hasUnsavedChanges: boolean = false;
+  // Convert observable to signal - automatically handles cleanup
+  currentConfiguration = toSignal(this.loaderService.configuration$, { initialValue: null as StackConfiguration | null });
+  validationErrors = signal<string[]>([]);
+  isNewConfiguration = signal<boolean>(false);
+  hasUnsavedChanges = signal<boolean>(false);
+  
+  // Computed signals for derived state
+  hasValidationErrors = computed(() => this.validationErrors().length > 0);
   
   // Drag and drop properties
   private draggedIndex: number | null = null;
@@ -36,12 +46,30 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   DriverType = DriverType;
   LoaderType = LoaderType;
 
-  constructor(
-    private loaderService: LoaderService,
-    private formBuilder: FormBuilder,
-    private toastrService: ToastrService
-  ) {
-    // Initialize form in ngOnInit to ensure proper timing
+  constructor() {
+    // Use effect() to react to configuration changes
+    effect(() => {
+      const config = this.currentConfiguration();
+      if (config !== undefined) {
+        this.isNewConfiguration.set(false);
+        this.hasUnsavedChanges.set(false);
+        if (config) {
+          // Use setTimeout to ensure form is initialized
+          setTimeout(() => {
+            if (this.configurationForm) {
+              this.populateForm(config);
+            }
+          });
+        } else {
+          // Initialize with empty form if no configuration
+          setTimeout(() => {
+            if (this.configurationForm) {
+              this.clearFormArrays();
+            }
+          });
+        }
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -49,30 +77,16 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     this.configurationForm = this.createForm();
     
     // Track form changes for unsaved changes detection
-    this.subscription.add(
-      this.configurationForm.valueChanges.subscribe(() => {
-        this.hasUnsavedChanges = true;
-      })
-    );
-    
-    // Subscribe to configuration changes
-    this.subscription.add(
-      this.loaderService.configuration$.subscribe(config => {
-        this.currentConfiguration = config;
-        this.isNewConfiguration = false;
-        this.hasUnsavedChanges = false;
-        if (config) {
-          this.populateForm(config);
-        } else {
-          // Initialize with empty form if no configuration
-          this.clearFormArrays();
-        }
-      })
-    );
+    // Form valueChanges can't use toSignal easily since form is created in ngOnInit
+    this.configurationForm.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.hasUnsavedChanges.set(true);
+      });
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    // No need to manually unsubscribe when using takeUntilDestroyed
   }
 
   private createForm(): FormGroup {
@@ -112,7 +126,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     });
 
     // Reset unsaved changes flag when populating from existing config
-    this.hasUnsavedChanges = false;
+    this.hasUnsavedChanges.set(false);
   }
 
   private clearFormArrays(): void {
@@ -242,13 +256,14 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
   }
 
   validateConfiguration(): boolean {
-    this.validationErrors = [];
+    const errors: string[] = [];
     
     if (!this.configurationForm || this.configurationForm.invalid) {
       if (this.configurationForm) {
         this.markFormGroupTouched(this.configurationForm);
       }
-      this.validationErrors.push('Please fix all form validation errors.');
+      errors.push('Please fix all form validation errors.');
+      this.validationErrors.set(errors);
       return false;
     }
 
@@ -257,58 +272,59 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     
     // Validate required fields
     if (!config.title || config.title.trim() === '') {
-      this.validationErrors.push('Title is required.');
+      errors.push('Title is required.');
     }
     
     if (!config.instructions || config.instructions.trim() === '') {
-      this.validationErrors.push('Instructions are required.');
+      errors.push('Instructions are required.');
     }
     
     if (!config.fhir_base_url || !config.fhir_base_url.match(/^https?:\/\/.+/)) {
-      this.validationErrors.push('FHIR Base URL must be a valid HTTP/HTTPS URL.');
+      errors.push('FHIR Base URL must be a valid HTTP/HTTPS URL.');
     }
     
     if (!config.driver || !Object.values(DriverType).includes(config.driver)) {
-      this.validationErrors.push('Driver must be one of: generic, hapi, wildfhir, fhircandle.');
+      errors.push('Driver must be one of: generic, hapi, wildfhir, fhircandle.');
     }
     
     if (!config.data || config.data.length === 0) {
-      this.validationErrors.push('At least one data file is required.');
+      errors.push('At least one data file is required.');
     }
     
     // Validate data files
     config.data.forEach((file, index) => {
       if (!file.file || file.file.trim() === '') {
-        this.validationErrors.push(`Data file ${index + 1}: File path is required.`);
+        errors.push(`Data file ${index + 1}: File path is required.`);
       }
       if (!file.name || file.name.trim() === '') {
-        this.validationErrors.push(`Data file ${index + 1}: Name is required.`);
+        errors.push(`Data file ${index + 1}: Name is required.`);
       }
       if (!file.description || file.description.trim() === '') {
-        this.validationErrors.push(`Data file ${index + 1}: Description is required.`);
+        errors.push(`Data file ${index + 1}: Description is required.`);
       }
       if (!file.type || file.type.trim() === '') {
-        this.validationErrors.push(`Data file ${index + 1}: Type is required.`);
+        errors.push(`Data file ${index + 1}: Type is required.`);
       }
       if (file.priority < 1) {
-        this.validationErrors.push(`Data file ${index + 1}: Priority must be at least 1.`);
+        errors.push(`Data file ${index + 1}: Priority must be at least 1.`);
       }
       if (file.loader === LoaderType.CQL_AS_FHIR_LIBRARY && (!file.evaluate || !file.evaluate.id)) {
-        this.validationErrors.push(`Data file ${index + 1}: CQL library requires evaluation ID.`);
+        errors.push(`Data file ${index + 1}: CQL library requires evaluation ID.`);
       }
     });
     
     // Validate links
     config.links.forEach((link, index) => {
       if (!link.name || link.name.trim() === '') {
-        this.validationErrors.push(`Link ${index + 1}: Name is required.`);
+        errors.push(`Link ${index + 1}: Name is required.`);
       }
       if (!link.url || !link.url.match(/^https?:\/\/.+/)) {
-        this.validationErrors.push(`Link ${index + 1}: URL must be a valid HTTP/HTTPS URL.`);
+        errors.push(`Link ${index + 1}: URL must be a valid HTTP/HTTPS URL.`);
       }
     });
 
-    return this.validationErrors.length === 0;
+    this.validationErrors.set(errors);
+    return errors.length === 0;
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {
@@ -336,11 +352,11 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
 
     const config = this.getConfigurationFromForm();
     this.loaderService.configurationSubject.next(config);
-    this.hasUnsavedChanges = false;
+    this.hasUnsavedChanges.set(false);
     
-    if (this.isNewConfiguration) {
-      this.isNewConfiguration = false;
-      this.currentConfiguration = config;
+    if (this.isNewConfiguration()) {
+      this.isNewConfiguration.set(false);
+      // currentConfiguration is now managed by the observable via toSignal()
       this.toastrService.success('New configuration created and applied successfully!', 'Success');
     } else {
       this.toastrService.success('Configuration updated and applied successfully!', 'Success');
@@ -414,7 +430,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
 
   createNewConfiguration(): void {
     // Check for unsaved changes
-    if (this.hasUnsavedChanges) {
+    if (this.hasUnsavedChanges()) {
       const confirmed = confirm('You have unsaved changes. Are you sure you want to create a new configuration? Your changes will be lost.');
       if (!confirmed) {
         return;
@@ -422,9 +438,9 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     }
 
     // Reset to new configuration mode
-    this.isNewConfiguration = true;
-    this.currentConfiguration = null;
-    this.hasUnsavedChanges = false;
+    this.isNewConfiguration.set(true);
+    // currentConfiguration is now managed by the observable via toSignal()
+    this.hasUnsavedChanges.set(false);
     
     if (!this.configurationForm) {
       this.configurationForm = this.createForm();
@@ -438,7 +454,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
       driver: DriverType.Generic
     });
     this.clearFormArrays();
-    this.validationErrors = [];
+    this.validationErrors.set([]);
     
     this.toastrService.info('Creating new configuration. Fill in the details below.', 'New Configuration');
   }
@@ -505,7 +521,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
     // Insert it at the new position
     dataArray.insert(toIndex, item);
     
-    this.hasUnsavedChanges = true;
+    this.hasUnsavedChanges.set(true);
     this.toastrService.info('Data file order updated', 'Reorder Complete');
   }
 
@@ -541,7 +557,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
       dataArray.push(item.control);
     });
 
-    this.hasUnsavedChanges = true;
+    this.hasUnsavedChanges.set(true);
     this.toastrService.info(`Data files sorted by ${sortBy}`, 'Sort Complete');
   }
 
@@ -550,7 +566,7 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
       this.configurationForm = this.createForm();
     }
     
-    if (this.isNewConfiguration) {
+    if (this.isNewConfiguration()) {
       // Reset to empty new configuration
       this.configurationForm.reset({
         title: '',
@@ -559,15 +575,15 @@ export class ConfigurationEditorComponent implements OnInit, OnDestroy {
         driver: DriverType.Generic
       });
       this.clearFormArrays();
-    } else if (this.currentConfiguration) {
+    } else if (this.currentConfiguration()) {
       // Reset to current configuration
-      this.populateForm(this.currentConfiguration);
+      this.populateForm(this.currentConfiguration()!);
     } else {
       // Reset to empty form
       this.configurationForm.reset();
       this.clearFormArrays();
     }
-    this.validationErrors = [];
-    this.hasUnsavedChanges = false;
+    this.validationErrors.set([]);
+    this.hasUnsavedChanges.set(false);
   }
 }

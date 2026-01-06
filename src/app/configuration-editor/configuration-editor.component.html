@@ -29,16 +29,16 @@
       <!-- Header Section -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 class="mb-1" [class.has-unsaved-changes]="hasUnsavedChanges">
+          <h2 class="mb-1" [class.has-unsaved-changes]="hasUnsavedChanges()">
             <i class="bi bi-gear me-2"></i>
             Configuration Editor
-            @if (isNewConfiguration) {
+            @if (isNewConfiguration()) {
               <span class="badge bg-success ms-2">New</span>
             }
           </h2>
-          @if (!isNewConfiguration && currentConfiguration) {
+          @if (!isNewConfiguration() && currentConfiguration()) {
             <small class="text-muted">
-              {{ currentConfiguration.title }}
+              {{ currentConfiguration()!.title }}
             </small>
           }
         </div>
@@ -62,15 +62,17 @@
         </div>
       </div>
           <!-- Validation Errors -->
-          @if (validationErrors.length > 0) {
+          @if (hasValidationErrors()) {
             <div class="alert alert-danger" role="alert">
               <h6 class="alert-heading">
                 <i class="bi bi-exclamation-triangle me-1"></i>
                 Validation Errors
               </h6>
               <ul class="mb-0">
-                @for (error of validationErrors; track error) {
+                @for (error of validationErrors(); track error) {
                   <li>{{ error }}</li>
+                } @empty {
+                  <li>No validation errors</li>
                 }
               </ul>
             </div>

@@ -1,6 +1,6 @@
 // Author: Preston Lee
 
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, inject, signal, computed, DestroyRef } from '@angular/core';
 import { Library, Bundle, Patient, Parameters } from 'fhir/r4';
 import { LibraryService } from '../library.service';
 import { PatientService } from '../patient.service';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Highlight } from 'ngx-highlightjs';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
 	selector: 'logic-component',
@@ -17,9 +18,13 @@ import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs
 	styleUrl: 'library.component.scss'
 })
 export class LibraryComponent implements OnChanges {
+	// Inject services using inject() function
+	protected libraryService = inject(LibraryService);
+	protected patientService = inject(PatientService);
+	protected toastrService = inject(ToastrService);
+	private destroyRef = inject(DestroyRef);
 
-
-	public library: Library | null = null;
+	public library = signal<Library | null>(null);
 
 	protected cql: string | null = null;
 	public static DEFAULT_LIBRARY_NAME: string = '';
@@ -28,102 +33,105 @@ export class LibraryComponent implements OnChanges {
 	public libraryDescription: string = "";
 
 	// Search functionality
-	public searchTerm: string = "";
-	public searchResults: Library[] = [];
-	public isSearching: boolean = false;
-	public showSearchResults: boolean = false;
+	public searchTerm = signal<string>("");
+	public searchResults = signal<Library[]>([]);
+	public isSearching = signal<boolean>(false);
+	public showSearchResults = signal<boolean>(false);
 	private searchSubject = new Subject<string>();
 
 	// Patient search functionality
-	public patientSearchTerm: string = "";
-	public patientSearchResults: Patient[] = [];
-	public isSearchingPatients: boolean = false;
-	public showPatientSearchResults: boolean = false;
+	public patientSearchTerm = signal<string>("");
+	public patientSearchResults = signal<Patient[]>([]);
+	public isSearchingPatients = signal<boolean>(false);
+	public showPatientSearchResults = signal<boolean>(false);
 	private patientSearchSubject = new Subject<string>();
 
 	// Library state tracking
-	public isNewLibrary: boolean = false;
-	public hasSelectedLibrary: boolean = false;
+	public isNewLibrary = signal<boolean>(false);
+	public hasSelectedLibrary = signal<boolean>(false);
 
 	// Patient state tracking
-	public hasSelectedPatient: boolean = false;
+	public hasSelectedPatient = signal<boolean>(false);
 
 	// Evaluation results
-	public evaluationResults: Parameters | null = null;
-	public isEvaluating: boolean = false;
+	public evaluationResults = signal<Parameters | null>(null);
+	public isEvaluating = signal<boolean>(false);
 
-	constructor(
-		protected libraryService: LibraryService,
-		protected patientService: PatientService,
-		protected toastrService: ToastrService) {
+	// Computed signals
+	public canEvaluate = computed(() => this.hasSelectedLibrary() && this.hasSelectedPatient() && !this.isNewLibrary());
+	public canShowEvaluationUI = computed(() => this.hasSelectedLibrary() && this.hasSelectedPatient());
+
+	constructor() {
 		// this.libraryService.libraryId = LibraryService.DEFAULT_LIBRARY_ID;
 		console.log('LibraryComponent initialized');
 		// this.reloadLibraryFromServer();
 		// this.reloadExampleCql();
 
-		// Set up live search with debouncing
+		// Set up live search with debouncing using takeUntilDestroyed
 		this.searchSubject.pipe(
 			debounceTime(100), // Wait 100ms after user stops typing
 			distinctUntilChanged(), // Only emit if the value has changed
 			switchMap(searchTerm => {
 				if (searchTerm.trim()) {
-					this.isSearching = true;
+					this.isSearching.set(true);
 					return this.libraryService.search(searchTerm);
 				} else {
-					this.isSearching = false;
-					this.showSearchResults = false;
-					this.searchResults = [];
+					this.isSearching.set(false);
+					this.showSearchResults.set(false);
+					this.searchResults.set([]);
 					return of<Bundle<Library>>({ resourceType: 'Bundle', type: 'searchset', entry: [] });
 				}
-			})
+			}),
+			takeUntilDestroyed(this.destroyRef)
 		).subscribe({
 			next: (bundle: Bundle<Library> | null) => {
 				if (!bundle) return;
-				this.isSearching = false;
+				this.isSearching.set(false);
 				if (bundle.entry && bundle.entry.length > 0) {
-					this.searchResults = bundle.entry.map(entry => entry.resource!);
-					this.showSearchResults = true;
-				} else if (this.searchTerm.trim()) {
-					this.searchResults = [];
-					this.showSearchResults = true;
+					this.searchResults.set(bundle.entry.map(entry => entry.resource!));
+					this.showSearchResults.set(true);
+				} else if (this.searchTerm().trim()) {
+					this.searchResults.set([]);
+					this.showSearchResults.set(true);
 				}
 			},
 			error: (error: any) => {
-				this.isSearching = false;
+				this.isSearching.set(false);
 				console.error('Error searching libraries:', error);
 				this.toastrService.error('Failed to search libraries. Please check your connection.', 'Search Error');
 			}
 		});
 
-		// Set up patient search with debouncing
+		// Set up patient search with debouncing using takeUntilDestroyed
 		this.patientSearchSubject.pipe(
 			debounceTime(100), // Wait 100ms after user stops typing
 			distinctUntilChanged(), // Only emit if the value has changed
 			switchMap(searchTerm => {
 				if (searchTerm.trim()) {
-					this.isSearchingPatients = true;
+					this.isSearchingPatients.set(true);
 					return this.patientService.search(searchTerm);
 				} else {
-					this.isSearchingPatients = false;
-					this.showPatientSearchResults = false;
-					this.patientSearchResults = [];
+					this.isSearchingPatients.set(false);
+					this.showPatientSearchResults.set(false);
+					this.patientSearchResults.set([]);
 					return of<Bundle<Patient>>({ resourceType: 'Bundle', type: 'searchset', entry: [] });
 				}
-			})
+			}),
+			takeUntilDestroyed(this.destroyRef)
 		).subscribe({
 			next: (bundle: Bundle<Patient> | null) => {
 				if (!bundle) return;
-				this.isSearchingPatients = false;
+				this.isSearchingPatients.set(false);
 				if (bundle.entry && bundle.entry.length > 0) {
-					this.patientSearchResults = bundle.entry.map(entry => entry.resource!);
-					this.showPatientSearchResults = true;
-				} else if (this.patientSearchTerm.trim()) {
-					this.patientSearchResults = [];
-					this.showPatientSearchResults = true;
+					this.patientSearchResults.set(bundle.entry.map(entry => entry.resource!));
+					this.showPatientSearchResults.set(true);
+				} else if (this.patientSearchTerm().trim()) {
+					this.patientSearchResults.set([]);
+					this.showPatientSearchResults.set(true);
 				}
 			},
 			error: (error: any) => {
-				this.isSearchingPatients = false;
+				this.isSearchingPatients.set(false);
 				console.error('Error searching patients:', error);
 				this.toastrService.error('Failed to search patients. Please check your connection.', 'Patient Search Error');
 			}
@@ -136,9 +144,10 @@ export class LibraryComponent implements OnChanges {
 
 	libraryAsString(): string {
 		let s = '';
-		if (this.library) {
+		const library = this.library();
+		if (library) {
 			// Create a copy of the library object with current form values
-			const libraryCopy = { ...this.library };
+			const libraryCopy = { ...library };
 			libraryCopy.id = this.libraryService.libraryId || '';
 			libraryCopy.name = this.libraryService.libraryId || '';
 			libraryCopy.title = this.libraryService.libraryId || '';
@@ -162,23 +171,24 @@ export class LibraryComponent implements OnChanges {
 	}
 
 	decodeLibaryData() {
-		if (this.library?.name) {
-			this.libraryService.libraryId = this.library.name;
+		const library = this.library();
+		if (library?.name) {
+			this.libraryService.libraryId = library.name;
 		} else {
 			this.libraryService.libraryId = LibraryComponent.DEFAULT_LIBRARY_NAME;
 		}
-		if (this.library?.version) {
-			this.libraryVersion = this.library.version;
+		if (library?.version) {
+			this.libraryVersion = library.version;
 		} else {
 			this.libraryVersion = LibraryComponent.DEFAULT_LIBRARY_VERSION;
 		}
-		if (this.library?.description) {
-			this.libraryDescription = this.library.description;
+		if (library?.description) {
+			this.libraryDescription = library.description;
 		} else {
 			this.libraryDescription = `Logic Library for ${this.libraryService.libraryId}`;
 		}
-		if (this.library && this.library.content) {
-			for (const content of this.library.content) {
+		if (library && library.content) {
+			for (const content of library.content) {
 				if (content.contentType === 'text/cql' && content.data) {
 					try {
 						this.cql = atob(content.data); // Decode base64 encoded CQL
@@ -193,14 +203,15 @@ export class LibraryComponent implements OnChanges {
 
 
 	reloadLibraryFromServer() {
+		// HTTP observables complete automatically after one emission - no cleanup needed
 		this.libraryService.get(this.libraryService.libraryId).subscribe({
 			next: (library: Library) => {
-				this.library = library;
+				this.library.set(library);
 				this.decodeLibaryData();
 				console.log('Library loaded:', library);
 				this.toastrService.success(`Library "${this.libraryService.libraryId}" loaded from server!`, 'Library Loaded');
 			}, error: (error: any) => {
-				this.library = null;
+				this.library.set(null);
 				console.error('Error loading library:', error);
 				this.toastrService.error(`The server didn't respond with library for "${this.libraryService.libraryId}". It likely doesn't exist, in which case you should upload one. :)`, 'Logic Library Not Loaded');
 			}
@@ -247,12 +258,13 @@ export class LibraryComponent implements OnChanges {
 				this.libraryVersion,
 				this.libraryDescription,
 				this.cql);
+			// HTTP observables complete automatically after one emission - no cleanup needed
 			this.libraryService.put(bundle).subscribe({
 				next: (response: any) => {
 					console.log('Library saved successfully:', response);
 					this.toastrService.success(`Library "${this.libraryService.libraryId}" saved successfully!`, 'Library Saved to Server');
-					this.library = response; // Update the local library reference
-					this.isNewLibrary = false; // After saving, it's no longer a new library
+					this.library.set(response); // Update the local library reference
+					this.isNewLibrary.set(false); // After saving, it's no longer a new library
 					// this.reloadLibrary();
 				}, error: (error: any) => {
 					console.error('Error saving library:', error);
@@ -263,14 +275,16 @@ export class LibraryComponent implements OnChanges {
 	}
 
 	deleteCql() {
-		if (this.library) {
-			this.libraryService.delete(this.library).subscribe({
+		const library = this.library();
+		if (library) {
+			// HTTP observables complete automatically after one emission - no cleanup needed
+			this.libraryService.delete(library).subscribe({
 				next: (response: any) => {
 					console.log('Library deleted successfully:', response);
 					this.toastrService.success(`Library "${this.libraryService.libraryId}" deleted successfully!`, 'Library Deleted');
-					this.library = null; // Clear the local library reference
-					this.hasSelectedLibrary = false; // Reset selection state
-					this.isNewLibrary = false; // Reset new library state
+					this.library.set(null); // Clear the local library reference
+					this.hasSelectedLibrary.set(false); // Reset selection state
+					this.isNewLibrary.set(false); // Reset new library state
 					this.decodeLibaryData(); // Reset the decoded data to defaults
 				}, error: (error: any) => {
 					console.error('Error deleting library:', error);
@@ -307,23 +321,23 @@ export class LibraryComponent implements OnChanges {
 	// Search functionality methods
 	onSearchInput(event: any) {
 		const searchTerm = event.target.value;
-		this.searchTerm = searchTerm;
+		this.searchTerm.set(searchTerm);
 		this.searchSubject.next(searchTerm);
 	}
 
 	selectLibrary(library: Library) {
 		if (library.id) {
 			this.libraryService.libraryId = library.id;
-			this.showSearchResults = false;
-			this.searchTerm = "";
-			this.searchResults = [];
+			this.showSearchResults.set(false);
+			this.searchTerm.set("");
+			this.searchResults.set([]);
 			
 			// Set state for existing library
-			this.isNewLibrary = false;
-			this.hasSelectedLibrary = true;
+			this.isNewLibrary.set(false);
+			this.hasSelectedLibrary.set(true);
 			
 			// Set the library object immediately for the FHIR Resource tab
-			this.library = library;
+			this.library.set(library);
 			
 			this.reloadLibraryFromServer();
 			this.toastrService.success(`Selected library: ${library.name || library.id}`, 'Library Selected');
@@ -331,10 +345,10 @@ export class LibraryComponent implements OnChanges {
 	}
 
 	clearSearch() {
-		this.searchTerm = "";
-		this.searchResults = [];
-		this.showSearchResults = false;
-		this.isSearching = false;
+		this.searchTerm.set("");
+		this.searchResults.set([]);
+		this.showSearchResults.set(false);
+		this.isSearching.set(false);
 		this.searchSubject.next(""); // Clear any pending searches
 	}
 
@@ -346,7 +360,7 @@ export class LibraryComponent implements OnChanges {
 		this.cql = "";
 		
 		// Create a basic Library object for the FHIR Resource tab
-		this.library = {
+		this.library.set({
 			resourceType: 'Library',
 			type: {},
 			id: '',
@@ -357,11 +371,11 @@ export class LibraryComponent implements OnChanges {
 			description: this.libraryDescription,
 			url: '',
 			content: []
-		};
+		});
 		
 		// Set state for new library
-		this.isNewLibrary = true;
-		this.hasSelectedLibrary = true;
+		this.isNewLibrary.set(true);
+		this.hasSelectedLibrary.set(true);
 		
 		// Clear search state
 		this.clearSearch();
@@ -371,13 +385,13 @@ export class LibraryComponent implements OnChanges {
 
 	clearSelection() {
 		// Reset all state
-		this.library = null;
+		this.library.set(null);
 		this.libraryService.libraryId = "";
 		this.libraryVersion = LibraryComponent.DEFAULT_LIBRARY_VERSION;
 		this.libraryDescription = "";
 		this.cql = "";
-		this.isNewLibrary = false;
-		this.hasSelectedLibrary = false;
+		this.isNewLibrary.set(false);
+		this.hasSelectedLibrary.set(false);
 		
 		// Clear search state
 		this.clearSearch();
@@ -400,34 +414,34 @@ export class LibraryComponent implements OnChanges {
 	// Patient search functionality methods
 	onPatientSearchInput(event: any) {
 		const searchTerm = event.target.value;
-		this.patientSearchTerm = searchTerm;
+		this.patientSearchTerm.set(searchTerm);
 		this.patientSearchSubject.next(searchTerm);
 	}
 
 	selectPatient(patient: Patient) {
 		if (patient.id) {
 			this.patientService.selectedPatient = patient;
-			this.showPatientSearchResults = false;
-			this.patientSearchTerm = "";
-			this.patientSearchResults = [];
-			this.hasSelectedPatient = true;
+			this.showPatientSearchResults.set(false);
+			this.patientSearchTerm.set("");
+			this.patientSearchResults.set([]);
+			this.hasSelectedPatient.set(true);
 			this.toastrService.success(`Selected patient: ${this.getPatientDisplayName(patient)}`, 'Patient Selected');
 		}
 	}
 
 	clearPatientSearch() {
-		this.patientSearchTerm = "";
-		this.patientSearchResults = [];
-		this.showPatientSearchResults = false;
-		this.isSearchingPatients = false;
+		this.patientSearchTerm.set("");
+		this.patientSearchResults.set([]);
+		this.showPatientSearchResults.set(false);
+		this.isSearchingPatients.set(false);
 		this.patientSearchSubject.next(""); // Clear any pending searches
 	}
 
 	clearPatientSelection() {
 		this.patientService.clearSelection();
-		this.hasSelectedPatient = false;
+		this.hasSelectedPatient.set(false);
 		this.clearPatientSearch();
-		this.evaluationResults = null; // Clear evaluation results when patient is cleared
+		this.evaluationResults.set(null); // Clear evaluation results when patient is cleared
 		this.toastrService.info("Patient selection cleared.", "Patient Cleared");
 	}
 
@@ -441,16 +455,6 @@ export class LibraryComponent implements OnChanges {
 		return patient.id || 'Unknown';
 	}
 
-	// Evaluation functionality
-	canEvaluate(): boolean {
-		return this.hasSelectedLibrary && this.hasSelectedPatient && !this.isNewLibrary;
-	}
-
-	// Check if we can show evaluation-related UI elements
-	canShowEvaluationUI(): boolean {
-		return this.hasSelectedLibrary && this.hasSelectedPatient;
-	}
-
 	evaluateLibrary() {
 		if (!this.canEvaluate()) {
 			this.toastrService.error('Please select both a library and a patient before evaluating.', 'Evaluation Error');
@@ -462,8 +466,8 @@ export class LibraryComponent implements OnChanges {
 			return;
 		}
 
-		this.isEvaluating = true;
-		this.evaluationResults = null;
+		this.isEvaluating.set(true);
+		this.evaluationResults.set(null);
 
 		// Create parameters for evaluation with patient context
 		const parameters: Parameters = {
@@ -476,17 +480,18 @@ export class LibraryComponent implements OnChanges {
 			]
 		};
 
+		// HTTP observables complete automatically after one emission - no cleanup needed
 		this.libraryService.evaluate(
 			this.libraryService.libraryId,
 			parameters
 		).subscribe({
 			next: (results: Parameters) => {
-				this.isEvaluating = false;
-				this.evaluationResults = results;
+				this.isEvaluating.set(false);
+				this.evaluationResults.set(results);
 				this.toastrService.success('Library evaluation completed successfully!', 'Evaluation Complete');
 			},
 			error: (error: any) => {
-				this.isEvaluating = false;
+				this.isEvaluating.set(false);
 				console.error('Error evaluating library:', error);
 				this.toastrService.error('Failed to evaluate library. Please check the server logs for more details.', 'Evaluation Failed');
 			}
@@ -494,7 +499,8 @@ export class LibraryComponent implements OnChanges {
 	}
 
 	evaluationResultsAsString(): string {
-		return this.evaluationResults ? JSON.stringify(this.evaluationResults, null, 2) : '';
+		const results = this.evaluationResults();
+		return results ? JSON.stringify(results, null, 2) : '';
 	}
 
 }

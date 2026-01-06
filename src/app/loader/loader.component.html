@@ -24,20 +24,20 @@
         <div class="col-sm-7">
             <h4>Data Controls
                 <button class="me-2 btn btn-sm btn-outline-secondary" role="button" (click)="reloadStackConfiguration()"
-                    [disabled]="state == 'loading'"><span class="bi bi-arrow-clockwise"></span>
+                    [disabled]="state() == 'loading'"><span class="bi bi-arrow-clockwise"></span>
                     Reload Form</button>
             </h4>
             <div class="input-group input-group-md">
                 <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
                 <input type="text" class="form-control" [(ngModel)]="fhirBaseUrl" />
             </div>
-            @if (files_to_load.length == 0) {
+            @if (files_to_load().length == 0) {
               <div>
                 <span class="badge bg-warning">No data files have been configured to load. Please update the controller
                     configuration file if you'd like to load FHIR bundles.</span>
               </div>
             }
-            @if (files_to_load.length > 0) {
+            @if (files_to_load().length > 0) {
               <div class="">
                 <h4 class="mt-4">Files
                 </h4>
@@ -62,7 +62,7 @@
                                 class="bi bi-check-square"></span> Toggle Selections</button>
 
                         <button class="btn btn-md btn-success" role="button" (click)="load()"
-                            [disabled]="state == 'loading'"><span class="bi bi-save"> Load Selected File
+                            [disabled]="state() == 'loading'"><span class="bi bi-save"> Load Selected File
                                 Sequence</span></button>
                         @if (development) {
                           <button class="btn btn-md btn-secondary" role="button"
@@ -75,7 +75,7 @@
 
                 <div class="my-2 list-group">
                     <!-- <span class="fw-lighter">The following data files will be loading in the following sequence. </span> -->
-                    @for (f of filteredFiles; track f.file) {
+                    @for (f of filteredFiles(); track f.file) {
                       <span class="list-group-item">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">
@@ -149,7 +149,7 @@
                     incompatible functions of <b>{{loaderService.driver?.name}}</b> will be disabled.</span> -->
                 <br />
                 <button class="btn btn-md btn-warning" role="button" (click)="resetServerData()"
-                    [disabled]="loaderService.driver?.supports_reset() == false || state == 'loading'"><span
+                    [disabled]="loaderService.driver?.supports_reset() == false || state() == 'loading'"><span
                         class="bi bi-trash">
                         Permanently Reset Server Data</span></button>
             </section>
@@ -158,7 +158,7 @@
                 <h4>Controller Messages</h4>
                 <span class="fw-lighter">Your activity history.</span>
                 <ul class="list-group">
-                    @for (m of messages; track m.date || $index) {
+                    @for (m of messages(); track m.date || $index) {
                       <li class="list-group-item" [class]="'list-group-item-' + m.type">
                         <div class="d-flex w-100 justify-content-between">
                             {{m.body}}

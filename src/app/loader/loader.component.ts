@@ -1,10 +1,10 @@
 // Author: Preston Lee
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, signal, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { MomentModule } from 'ngx-moment';
 import { MarkdownComponent } from 'ngx-markdown';
@@ -26,80 +26,51 @@ import { Scenario } from './scenario';
 	templateUrl: './loader.component.html',
 	styleUrl: './loader.component.scss'
 })
-export class LoaderComponent implements OnInit, OnDestroy {
+export class LoaderComponent implements OnInit {
+	// Inject services using inject() function
+	protected route = inject(ActivatedRoute);
+	protected toastrService = inject(ToastrService);
+	protected loaderService = inject(LoaderService);
 
 	evaluateSubject: string | null = null;
 	selectedScenario: string = 'default';
 	availableScenarios: Scenario[] = [];
-	filteredFiles: DataFile[] = [];
+	filteredFiles = signal<DataFile[]>([]);
 
 	development: boolean = false;
 
 	configuration_file = 'stack.json';
 
-	
-	// stack_configuration: StackConfiguration = new StackConfiguration();
-	// driver: any = null;
+	// Convert observables to signals using toSignal() - automatically handles cleanup
+	files_to_load = toSignal(this.loaderService.files$, { initialValue: [] });
+	state = toSignal(this.loaderService.state$, { initialValue: 'default' as const });
+	errors = toSignal(this.loaderService.errors$, { initialValue: false });
+	messages = toSignal(this.loaderService.messages$, { initialValue: [] });
 
-	files_to_load: DataFile[] = [];
-	state: 'default' | 'loading' | 'loaded' = 'default';
-	errors: boolean = false;
+	constructor() {
+		// Use effect() to react to configuration changes
+		effect(() => {
+			const config = this.loaderService.currentConfiguration;
+			if (config) {
+				this.updateAvailableScenarios();
+				this.updateFilteredFiles();
+			}
+		});
 
-	messages: LoaderMessage[] = [];
-
-	private subscriptions: Subscription[] = [];
-
-	constructor(
-		protected route: ActivatedRoute,
-		protected toastrService: ToastrService,
-		protected loaderService: LoaderService
-	) {
+		// Use effect() to react to files changes
+		effect(() => {
+			// Access the signal to trigger the effect
+			const files = this.files_to_load();
+			this.updateFilteredFiles();
+		});
 	}
 
 	ngOnInit() {
-		// Subscribe to service observables
-		this.subscriptions.push(
-			this.loaderService.configuration$.subscribe(config => {
-				if (config) {
-					this.updateAvailableScenarios();
-					this.updateFilteredFiles();
-				}
-			})
-		);
-
-		this.subscriptions.push(
-			this.loaderService.files$.subscribe(files => {
-				this.files_to_load = files;
-				this.updateFilteredFiles();
-			})
-		);
-
-		this.subscriptions.push(
-			this.loaderService.messages$.subscribe(messages => {
-				this.messages = messages;
-			})
-		);
-
-		this.subscriptions.push(
-			this.loaderService.state$.subscribe(state => {
-				this.state = state;
-			})
-		);
-
-		this.subscriptions.push(
-			this.loaderService.errors$.subscribe(errors => {
-				this.errors = errors;
-			})
-		);
-
 		// Initialize scenarios and filtered files
 		this.updateAvailableScenarios();
 		this.updateFilteredFiles();
 	}
 
-	ngOnDestroy() {
-		this.subscriptions.forEach(sub => sub.unsubscribe());
-	}
 
 	changeDriver() {
 		// Driver changes are now handled by the service
@@ -132,15 +103,17 @@ export class LoaderComponent implements OnInit, OnDestroy {
 	}
 
 	reloadStackConfiguration() {
-		this.loaderService.loadStackConfiguration().subscribe({
-			next: () => {
-				// Configuration loaded successfully
-			},
-			error: (error) => {
-				console.error('Error loading configuration file: ' + this.configuration_file);
-				console.error(error);
-			}
-		});
+		// HTTP observables complete automatically after one emission - no cleanup needed
+		this.loaderService.loadStackConfiguration()
+			.subscribe({
+				next: () => {
+					// Configuration loaded successfully
+				},
+				error: (error) => {
+					console.error('Error loading configuration file: ' + this.configuration_file);
+					console.error(error);
+				}
+			});
 	}
 
 	loaderTypes() {
@@ -148,7 +121,7 @@ export class LoaderComponent implements OnInit, OnDestroy {
 	}
 
 	load() {
-		this.loaderService.loadFiles(this.filteredFiles);
+		this.loaderService.loadFiles(this.filteredFiles());
 	}
 
 	toggleSelected() {
@@ -156,14 +129,16 @@ export class LoaderComponent implements OnInit, OnDestroy {
 	}
 
 	resetServerData() {
-		this.loaderService.resetServerData().subscribe({
-			next: (data) => {
-				// Reset successful - handled by service
-			},
-			error: (error) => {
-				// Error handled by service
-			}
-		});
+		// HTTP observables complete automatically after one emission - no cleanup needed
+		this.loaderService.resetServerData()
+			.subscribe({
+				next: (data) => {
+					// Reset successful - handled by service
+				},
+				error: (error) => {
+					// Error handled by service
+				}
+			});
 	}
 
 	test() {
@@ -177,14 +152,16 @@ export class LoaderComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this.loaderService.evaluateCql(file, this.evaluateSubject).subscribe({
-			next: (data) => {
-				// Evaluation successful - handled by service
-			},
-			error: (error) => {
-				// Error handled by service
-			}
-		});
+		// HTTP observables complete automatically after one emission - no cleanup needed
+		this.loaderService.evaluateCql(file, this.evaluateSubject)
+			.subscribe({
+				next: (data) => {
+					// Evaluation successful - handled by service
+				},
+				error: (error) => {
+					// Error handled by service
+				}
+			});
 	}
 
 	private updateAvailableScenarios() {
@@ -201,14 +178,14 @@ export class LoaderComponent implements OnInit, OnDestroy {
 	private updateFilteredFiles() {
 		if (this.selectedScenario === 'default') {
 			// Include files with no scenarios or files that explicitly reference 'default'
-			this.filteredFiles = this.files_to_load.filter(file => 
+			this.filteredFiles.set(this.files_to_load().filter(file => 
 				!file.scenarios || file.scenarios.length === 0 || file.scenarios.includes('default')
-			);
+			));
 		} else {
 			// Include only files that reference the selected scenario
-			this.filteredFiles = this.files_to_load.filter(file => 
+			this.filteredFiles.set(this.files_to_load().filter(file => 
 				file.scenarios && file.scenarios.includes(this.selectedScenario)
-			);
+			));
 		}
 	}
 
