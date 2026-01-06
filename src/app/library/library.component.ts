@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Highlight } from 'ngx-highlightjs';
-import { Subject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 
 @Component({
 	selector: 'logic-component',
@@ -73,11 +73,12 @@ export class LibraryComponent implements OnChanges {
 					this.isSearching = false;
 					this.showSearchResults = false;
 					this.searchResults = [];
-					return [];
+					return of<Bundle<Library>>({ resourceType: 'Bundle', type: 'searchset', entry: [] });
 				}
 			})
 		).subscribe({
-			next: (bundle: Bundle<Library>) => {
+			next: (bundle: Bundle<Library> | null) => {
+				if (!bundle) return;
 				this.isSearching = false;
 				if (bundle.entry && bundle.entry.length > 0) {
 					this.searchResults = bundle.entry.map(entry => entry.resource!);
@@ -106,11 +107,12 @@ export class LibraryComponent implements OnChanges {
 					this.isSearchingPatients = false;
 					this.showPatientSearchResults = false;
 					this.patientSearchResults = [];
-					return [];
+					return of<Bundle<Patient>>({ resourceType: 'Bundle', type: 'searchset', entry: [] });
 				}
 			})
 		).subscribe({
-			next: (bundle: Bundle<Patient>) => {
+			next: (bundle: Bundle<Patient> | null) => {
+				if (!bundle) return;
 				this.isSearchingPatients = false;
 				if (bundle.entry && bundle.entry.length > 0) {
 					this.patientSearchResults = bundle.entry.map(entry => entry.resource!);

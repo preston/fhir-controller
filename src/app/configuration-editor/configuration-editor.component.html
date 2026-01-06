@@ -385,7 +385,7 @@
                               </button>
                             </div>
                             <div formArrayName="subjects">
-                              <div *ngFor="let subject of getSubjectsArray(dataFile.get('evaluate'))?.controls || []; let j = index" class="row mb-2" [formGroupName]="j">
+                              <div *ngFor="let subject of getSubjectsArray(dataFile.get('evaluate')).controls || []; let j = index" class="row mb-2" [formGroupName]="j">
                                 <div class="col-md-5">
                                   <div class="form-floating">
                                     <input 
