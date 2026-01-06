@@ -32,11 +32,15 @@
           <h2 class="mb-1" [class.has-unsaved-changes]="hasUnsavedChanges">
             <i class="bi bi-gear me-2"></i>
             Configuration Editor
-            <span *ngIf="isNewConfiguration" class="badge bg-success ms-2">New</span>
+            @if (isNewConfiguration) {
+              <span class="badge bg-success ms-2">New</span>
+            }
           </h2>
-          <small *ngIf="!isNewConfiguration && currentConfiguration" class="text-muted">
-            {{ currentConfiguration.title }}
-          </small>
+          @if (!isNewConfiguration && currentConfiguration) {
+            <small class="text-muted">
+              {{ currentConfiguration.title }}
+            </small>
+          }
         </div>
         <div class="d-flex gap-2">
           <button type="button" class="btn btn-outline-secondary btn-sm" (click)="createNewConfiguration()">
@@ -58,18 +62,23 @@
         </div>
       </div>
           <!-- Validation Errors -->
-          <div *ngIf="validationErrors.length > 0" class="alert alert-danger" role="alert">
-            <h6 class="alert-heading">
-              <i class="bi bi-exclamation-triangle me-1"></i>
-              Validation Errors
-            </h6>
-            <ul class="mb-0">
-              <li *ngFor="let error of validationErrors">{{ error }}</li>
-            </ul>
-          </div>
+          @if (validationErrors.length > 0) {
+            <div class="alert alert-danger" role="alert">
+              <h6 class="alert-heading">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                Validation Errors
+              </h6>
+              <ul class="mb-0">
+                @for (error of validationErrors; track error) {
+                  <li>{{ error }}</li>
+                }
+              </ul>
+            </div>
+          }
 
           <!-- Configuration Form -->
-          <form *ngIf="configurationForm" [formGroup]="configurationForm" (ngSubmit)="saveConfiguration()">
+          @if (configurationForm) {
+            <form [formGroup]="configurationForm" (ngSubmit)="saveConfiguration()">
             
             <!-- Basic Configuration Section -->
             <div class="row mb-3">
@@ -90,9 +99,11 @@
                     placeholder="Enter configuration title">
                   <label for="title">Title <span class="text-danger">*</span></label>
                 </div>
-                <div *ngIf="configurationForm.get('title')?.invalid && configurationForm.get('title')?.touched" class="invalid-feedback">
-                  Title is required and must be at least 1 character long.
-                </div>
+                @if (configurationForm.get('title')?.invalid && configurationForm.get('title')?.touched) {
+                  <div class="invalid-feedback">
+                    Title is required and must be at least 1 character long.
+                  </div>
+                }
               </div>
               <div class="col-md-6">
                 <div class="form-floating">
@@ -109,9 +120,11 @@
                   </select>
                   <label for="driver">Driver Type <span class="text-danger">*</span></label>
                 </div>
-                <div *ngIf="configurationForm.get('driver')?.invalid && configurationForm.get('driver')?.touched" class="invalid-feedback">
-                  Please select a driver type.
-                </div>
+                @if (configurationForm.get('driver')?.invalid && configurationForm.get('driver')?.touched) {
+                  <div class="invalid-feedback">
+                    Please select a driver type.
+                  </div>
+                }
               </div>
             </div>
 
@@ -127,9 +140,11 @@
                     placeholder="https://your-fhir-server.com/fhir">
                   <label for="fhir_base_url">FHIR Base URL <span class="text-danger">*</span></label>
                 </div>
-                <div *ngIf="configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched" class="invalid-feedback">
-                  Please enter a valid HTTP/HTTPS URL.
-                </div>
+                @if (configurationForm.get('fhir_base_url')?.invalid && configurationForm.get('fhir_base_url')?.touched) {
+                  <div class="invalid-feedback">
+                    Please enter a valid HTTP/HTTPS URL.
+                  </div>
+                }
               </div>
             </div>
 
@@ -155,9 +170,11 @@
                         placeholder="Enter user instructions in markdown format..."></textarea>
                       <label for="instructions">Instructions <span class="text-danger">*</span></label>
                     </div>
-                    <div *ngIf="configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched" class="invalid-feedback">
-                      Instructions are required.
-                    </div>
+                    @if (configurationForm.get('instructions')?.invalid && configurationForm.get('instructions')?.touched) {
+                      <div class="invalid-feedback">
+                        Instructions are required.
+                      </div>
+                    }
                     <div class="form-text">Use markdown format for rich text instructions.</div>
                   </div>
                   
@@ -171,12 +188,11 @@
                     </div>
                     <div class="markdown-preview">
                       <div class="border rounded p-3 bg-light" style="min-height: 150px;">
-                        <div *ngIf="configurationForm.get('instructions')?.value; else noInstructions">
+                        @if (configurationForm.get('instructions')?.value) {
                           <markdown [data]="configurationForm.get('instructions')?.value"></markdown>
-                        </div>
-                        <ng-template #noInstructions>
+                        } @else {
                           <div class="text-muted fst-italic">No instructions entered yet...</div>
-                        </ng-template>
+                        }
                       </div>
                     </div>
                   </div>
@@ -219,14 +235,14 @@
             <div formArrayName="data" 
                  (dragover)="onDragOver($event)" 
                  (drop)="onDrop($event)">
-              <div *ngFor="let dataFile of dataFiles.controls; let i = index" 
-                   class="border rounded p-4 mb-3 draggable-item"
-                   [attr.data-index]="i"
-                   draggable="true"
-                   (dragstart)="onDragStart($event, i)"
-                   (dragend)="onDragEnd($event)"
-                   (dragover)="onItemDragOver($event, i)"
-                   (drop)="onItemDrop($event, i)">
+              @for (dataFile of dataFiles.controls; track dataFile; let i = $index) {
+                <div class="border rounded p-4 mb-3 draggable-item"
+                     [attr.data-index]="i"
+                     draggable="true"
+                     (dragstart)="onDragStart($event, i)"
+                     (dragend)="onDragEnd($event)"
+                     (dragover)="onItemDragOver($event, i)"
+                     (drop)="onItemDrop($event, i)">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <div class="d-flex align-items-center">
                     <i class="bi bi-grip-vertical text-muted me-2 drag-handle" style="cursor: move;"></i>
@@ -249,9 +265,11 @@
                           placeholder="data/example/patient.json">
                         <label [for]="'file_' + i">File Path <span class="text-danger">*</span></label>
                       </div>
-                      <div *ngIf="dataFile.get('file')?.invalid && dataFile.get('file')?.touched" class="invalid-feedback">
-                        File path is required.
-                      </div>
+                      @if (dataFile.get('file')?.invalid && dataFile.get('file')?.touched) {
+                        <div class="invalid-feedback">
+                          File path is required.
+                        </div>
+                      }
                     </div>
                     <div class="col-md-3">
                       <div class="form-floating">
@@ -264,9 +282,11 @@
                           placeholder="Patient Data">
                         <label [for]="'name_' + i">Name <span class="text-danger">*</span></label>
                       </div>
-                      <div *ngIf="dataFile.get('name')?.invalid && dataFile.get('name')?.touched" class="invalid-feedback">
-                        Name is required.
-                      </div>
+                      @if (dataFile.get('name')?.invalid && dataFile.get('name')?.touched) {
+                        <div class="invalid-feedback">
+                          Name is required.
+                        </div>
+                      }
                     </div>
                     <div class="col-md-3">
                       <div class="form-floating">
@@ -280,9 +300,11 @@
                           placeholder="1">
                         <label [for]="'priority_' + i">Priority</label>
                       </div>
-                      <div *ngIf="dataFile.get('priority')?.invalid && dataFile.get('priority')?.touched" class="invalid-feedback">
-                        Priority must be at least 1.
-                      </div>
+                      @if (dataFile.get('priority')?.invalid && dataFile.get('priority')?.touched) {
+                        <div class="invalid-feedback">
+                          Priority must be at least 1.
+                        </div>
+                      }
                     </div>
                   </div>
 
@@ -298,9 +320,11 @@
                           placeholder="Description of the data file..."></textarea>
                         <label [for]="'description_' + i">Description <span class="text-danger">*</span></label>
                       </div>
-                      <div *ngIf="dataFile.get('description')?.invalid && dataFile.get('description')?.touched" class="invalid-feedback">
-                        Description is required.
-                      </div>
+                      @if (dataFile.get('description')?.invalid && dataFile.get('description')?.touched) {
+                        <div class="invalid-feedback">
+                          Description is required.
+                        </div>
+                      }
                     </div>
                     <div class="col-md-3">
                       <div class="form-floating">
@@ -313,9 +337,11 @@
                           placeholder="Patient">
                         <label [for]="'type_' + i">Type <span class="text-danger">*</span></label>
                       </div>
-                      <div *ngIf="dataFile.get('type')?.invalid && dataFile.get('type')?.touched" class="invalid-feedback">
-                        Type is required.
-                      </div>
+                      @if (dataFile.get('type')?.invalid && dataFile.get('type')?.touched) {
+                        <div class="invalid-feedback">
+                          Type is required.
+                        </div>
+                      }
                     </div>
                     <div class="col-md-3">
                       <div class="form-floating">
@@ -331,9 +357,11 @@
                         </select>
                         <label [for]="'loader_' + i">Loader Type <span class="text-danger">*</span></label>
                       </div>
-                      <div *ngIf="dataFile.get('loader')?.invalid && dataFile.get('loader')?.touched" class="invalid-feedback">
-                        Please select a loader type.
-                      </div>
+                      @if (dataFile.get('loader')?.invalid && dataFile.get('loader')?.touched) {
+                        <div class="invalid-feedback">
+                          Please select a loader type.
+                        </div>
+                      }
                     </div>
                   </div>
 
@@ -353,7 +381,8 @@
                   </div>
 
                   <!-- CQL Evaluation Section (only for CQL libraries) -->
-                  <div *ngIf="dataFile.get('loader')?.value === LoaderType.CQL_AS_FHIR_LIBRARY" class="mt-3">
+                  @if (dataFile.get('loader')?.value === LoaderType.CQL_AS_FHIR_LIBRARY) {
+                    <div class="mt-3">
                     <div class="border rounded p-3 bg-white">
                       <h6 class="mb-3 text-muted">CQL Evaluation</h6>
                       <div formGroupName="evaluate">
@@ -369,9 +398,11 @@
                                 placeholder="Library ID for evaluation">
                               <label [for]="'evaluate_id_' + i">Library ID <span class="text-danger">*</span></label>
                             </div>
-                            <div *ngIf="dataFile.get('evaluate.id')?.invalid && dataFile.get('evaluate.id')?.touched" class="invalid-feedback">
-                              Library ID is required for CQL libraries.
-                            </div>
+                            @if (dataFile.get('evaluate.id')?.invalid && dataFile.get('evaluate.id')?.touched) {
+                              <div class="invalid-feedback">
+                                Library ID is required for CQL libraries.
+                              </div>
+                            }
                           </div>
                         </div>
 
@@ -385,7 +416,8 @@
                               </button>
                             </div>
                             <div formArrayName="subjects">
-                              <div *ngFor="let subject of getSubjectsArray(dataFile.get('evaluate')).controls || []; let j = index" class="row mb-2" [formGroupName]="j">
+                              @for (subject of getSubjectsArray(dataFile.get('evaluate')).controls || []; track subject; let j = $index) {
+                                <div class="row mb-2" [formGroupName]="j">
                                 <div class="col-md-5">
                                   <div class="form-floating">
                                     <input 
@@ -414,14 +446,17 @@
                                   </button>
                                 </div>
                               </div>
+                              }
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  }
                 </div>
               </div>
+              }
             </div>
 
             <!-- Links Section -->
@@ -438,7 +473,8 @@
             </div>
 
             <div formArrayName="links">
-              <div *ngFor="let link of links.controls; let i = index" class="border rounded p-3 mb-3 bg-light" [formGroupName]="i">
+              @for (link of links.controls; track link; let i = $index) {
+                <div class="border rounded p-3 mb-3 bg-light" [formGroupName]="i">
                 <div class="row">
                   <div class="col-md-5">
                     <div class="form-floating">
@@ -451,9 +487,11 @@
                         placeholder="Documentation">
                       <label [for]="'link_name_' + i">Link Name <span class="text-danger">*</span></label>
                     </div>
-                    <div *ngIf="link.get('name')?.invalid && link.get('name')?.touched" class="invalid-feedback">
-                      Link name is required.
-                    </div>
+                    @if (link.get('name')?.invalid && link.get('name')?.touched) {
+                      <div class="invalid-feedback">
+                        Link name is required.
+                      </div>
+                    }
                   </div>
                   <div class="col-md-5">
                     <div class="form-floating">
@@ -466,9 +504,11 @@
                         placeholder="https://example.com">
                       <label [for]="'link_url_' + i">URL <span class="text-danger">*</span></label>
                     </div>
-                    <div *ngIf="link.get('url')?.invalid && link.get('url')?.touched" class="invalid-feedback">
-                      Please enter a valid HTTP/HTTPS URL.
-                    </div>
+                    @if (link.get('url')?.invalid && link.get('url')?.touched) {
+                      <div class="invalid-feedback">
+                        Please enter a valid HTTP/HTTPS URL.
+                      </div>
+                    }
                   </div>
                   <div class="col-md-2 d-flex align-items-end">
                     <button type="button" class="btn btn-outline-danger btn-sm w-100" (click)="removeLink(i)">
@@ -478,6 +518,7 @@
                   </div>
                 </div>
               </div>
+              }
             </div>
 
             <!-- Action Buttons -->
@@ -499,7 +540,8 @@
                 </div>
               </div>
             </div>
-          </form>
+            </form>
+          }
     </div>
   </div>
 </div>

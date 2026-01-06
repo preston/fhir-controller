@@ -2,7 +2,7 @@
 
 [![Build Status](https://ci.prestonlee.com/api/badges/preston/fhir-controller/status.svg)](https://ci.prestonlee.com/preston/fhir-controller)
 
-FHIR Controller is a base standalone web application image providing a simple web UI for bootstrapping a freshly booted FHIR server. Just drop your FHIR data bundles and CQL files into a child project and extend the [base Docker image](https://hub.docker.com/r/p3000/fhir-controller/tags). You'll get:
+FHIR Controller is a base standalone web application image providing a simple web UI for bootstrapping a freshly booted FHIR server. Just drop your FHIR data bundles and CQL files into a [child project](https://github.com/preston/fhir-controller-template) and extend the [base Docker image](https://hub.docker.com/r/p3000/fhir-controller/tags). You'll get:
 
 1. An HTML rendering of your Markdown-formatted instructions or tutorial and supplemental links.
 2. Data loader utility for seeding your FHIR Bundles and CQL files in sequence to a default FHIR base URL.
@@ -29,4 +29,4 @@ See [stack.schema.json](src/assets/stack.schema.json) for the JSON schema.
 
 ## License
 
-Provide under the Apache 2.0 license. Copyright © 2024 Preston Lee. All rights reserved.
+Provide under the Apache 2.0 license. Copyright © 2024-2025 Preston Lee. All rights reserved.

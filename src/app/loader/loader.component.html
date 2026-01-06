@@ -11,9 +11,11 @@
             <section>
                 <h4>Links</h4>
                 <ul class="list-group">
-                    <li *ngFor="let l of loaderService.currentConfiguration?.links" class="list-group-item">
+                    @for (l of loaderService.currentConfiguration?.links || []; track l.url) {
+                      <li class="list-group-item">
                         <a [href]="l.url" target="_blank">{{l.name}}</a>
-                    </li>
+                      </li>
+                    }
                 </ul>
             </section>
         </div>
@@ -29,11 +31,14 @@
                 <span class="input-group-text"> <span class="bi bi-fire"></span>&nbsp; FHIR Base URL</span>
                 <input type="text" class="form-control" [(ngModel)]="fhirBaseUrl" />
             </div>
-            <div *ngIf="files_to_load.length == 0">
+            @if (files_to_load.length == 0) {
+              <div>
                 <span class="badge bg-warning">No data files have been configured to load. Please update the controller
                     configuration file if you'd like to load FHIR bundles.</span>
-            </div>
-            <div *ngIf="files_to_load.length > 0" class="">
+              </div>
+            }
+            @if (files_to_load.length > 0) {
+              <div class="">
                 <h4 class="mt-4">Files
                 </h4>
                 <div class="row mb-3">
@@ -41,9 +46,11 @@
                         <div class="input-group">
                             <span class="input-group-text"><span class="bi bi-diagram-3"></span>&nbsp;Scenario</span>
                             <select class="form-control" [(ngModel)]="selectedScenario" (change)="onScenarioChange()">
-                                <option *ngFor="let scenario of availableScenarios" [value]="scenario.id">
+                                @for (scenario of availableScenarios; track scenario.id) {
+                                  <option [value]="scenario.id">
                                     {{scenario.name}}
-                                </option>
+                                  </option>
+                                }
                             </select>
                         </div>
                         <small class="text-muted">{{selectedScenarioDescription}}</small>
@@ -57,23 +64,28 @@
                         <button class="btn btn-md btn-success" role="button" (click)="load()"
                             [disabled]="state == 'loading'"><span class="bi bi-save"> Load Selected File
                                 Sequence</span></button>
-                        <button *ngIf="development" class="btn btn-md btn-secondary" role="button"
+                        @if (development) {
+                          <button class="btn btn-md btn-secondary" role="button"
                             (click)="test()"><span class="bi bi-chat"></span>
                             Test</button>
+                        }
                             </div>
                     </div>
                 </div>
 
                 <div class="my-2 list-group">
                     <!-- <span class="fw-lighter">The following data files will be loading in the following sequence. </span> -->
-                    <span *ngFor="let f of filteredFiles" class="list-group-item">
+                    @for (f of filteredFiles; track f.file) {
+                      <span class="list-group-item">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">
                                 <div class="form-check form-switch form-check-secondary">
-                                    <span *ngIf="f.loader === loaderTypes().CQL_AS_FHIR_LIBRARY"
-                                        class="bi bi-code"></span>
-                                    <span *ngIf="f.loader === loaderTypes().FHIR_BUNDLE || !f.loader"
-                                        class="bi bi-fire"></span>
+                                    @if (f.loader === loaderTypes().CQL_AS_FHIR_LIBRARY) {
+                                      <span class="bi bi-code"></span>
+                                    }
+                                    @if (f.loader === loaderTypes().FHIR_BUNDLE || !f.loader) {
+                                      <span class="bi bi-fire"></span>
+                                    }
                                     <input class="form-check-input me-1" role="checkbox" [(ngModel)]="f.load"
                                         type="checkbox" />
                                     &nbsp;<a role="button" [href]="f.file" target="_blank">{{f.name}}</a>
@@ -94,8 +106,9 @@
                             @if(f.loader === loaderTypes().CQL_AS_FHIR_LIBRARY) {
                             <div class="input-group-text"><span class="bi bi-people"></span>&nbsp;Subject</div>
                             <select name="subject" id="evaluateSubject" [(ngModel)]="evaluateSubject">
-                                <option *ngFor="let s of f.evaluate?.subjects">{{s.name}}
-                                </option>
+                                @for (s of f.evaluate?.subjects || []; track s.id || s.name) {
+                                  <option>{{s.name}}</option>
+                                }
                             </select>
                             @if(this.evaluateSubject) {
                             <button class="btn btn-md btn-success" (click)="evaluateCql(f)"><span
@@ -106,9 +119,11 @@
                         </div>
                         }
                         <!-- <span class="badge text-bg-primary rounded-pill">14</span> -->
-                    </span>
+                      </span>
+                    }
                 </div>
-            </div>
+              </div>
+            }
 
         </div>
         <div class="col-sm-5">
@@ -143,13 +158,14 @@
                 <h4>Controller Messages</h4>
                 <span class="fw-lighter">Your activity history.</span>
                 <ul class="list-group">
-                    <li *ngFor="let m of messages" class="list-group-item" [class]="'list-group-item-' + m.type">
+                    @for (m of messages; track m.date || $index) {
+                      <li class="list-group-item" [class]="'list-group-item-' + m.type">
                         <div class="d-flex w-100 justify-content-between">
                             {{m.body}}
                             <small> {{m.date | amTimeAgo}}</small>
                         </div>
-
-                    </li>
+                      </li>
+                    }
                 </ul>
             </section>
 
