@@ -105,6 +105,32 @@
                         </div>
                     </div>
 
+                    <div class="mt-5">
+                        <h3 class="h4 mb-3">
+                            <i class="bi bi-diagram-3 me-2 text-primary"></i>
+                            Understanding Scenarios
+                        </h3>
+                        <p class="mb-3">
+                            <strong>Scenarios</strong> are predefined collections of FHIR resources and CQL libraries that represent
+                            specific use cases or testing environments. Each scenario contains a curated set of data files that work
+                            together to create a particular testing or demonstration context.
+                        </p>
+                        <p class="mb-3">
+                            Scenarios are used to:
+                        </p>
+                        <ul class="list-unstyled ms-3">
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle text-primary me-2"></i>Quickly set up your FHIR server with relevant test data</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle text-primary me-2"></i>Load subsets of data for isolated use cases without cluttering your server</li> 
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle text-primary me-2"></i>Provide variations of data file combinations for testing</li>
+                            <li class="mb-2"><i class="bi bi-arrow-right-circle text-primary me-2"></i>Reduce the compute footprint of your FHIR server</li>
+                        </ul>
+                        <p class="text-muted mb-0">
+                            When you select a scenario in the Loader tab, FHIR Controller will load all the associated FHIR resources
+                            and CQL libraries for that scenario into your configured FHIR server, giving you a complete, ready-to-use
+                            data environment.
+                        </p>
+                    </div>
+
                     <div class="alert alert-info mt-5">
                         <i class="bi bi-info-circle me-2"></i>
                         <strong>Tip:</strong> Start with the sample data provided in the Loader tab to get familiar with

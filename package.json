@@ -1,7 +1,7 @@
 {
   "name": "stack",
-  "description": "FHIR resource server controller and utilities.",
-  "version": "3.2.0",
+  "description": "FHIR resource server controller and content management utilities.",
+  "version": "3.3.0",
   "scripts": {
     "ng": "ng",
     "start": "envsubst < src/assets/configuration.template.js > src/assets/configuration.js && ng serve",
